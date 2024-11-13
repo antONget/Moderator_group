@@ -56,5 +56,9 @@ async def process_press_start(message: Message, bot: Bot) -> None:
                                            chat_id=group.group_id)
         if member.status != 'left':
             auth = True
-    await message.answer(f"Здравствуйте, {user.name}",
-                         reply_markup=main_keyboard(auth=auth))
+    if user.name:
+        await message.answer(f"Здравствуйте, {user.name}",
+                             reply_markup=main_keyboard(auth=auth))
+    else:
+        await message.answer(f"Здравствуйте!",
+                             reply_markup=main_keyboard(auth=auth))
