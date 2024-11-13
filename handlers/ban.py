@@ -1,28 +1,69 @@
-from filter.filter_group import parse_time, is_admin
-from aiogram.types import Message, ChatPermissions
-from aiogram.filters import Command, CommandObject
-from aiogram import Bot, Router, F
-from contextlib import suppress
-from aiogram.exceptions import TelegramBadRequest
+import logging
 
+from aiogram import Router, Bot, F
+from aiogram.types import Message
+from filter.filter_group import is_admin
+from aiogram.filters import Command, CommandObject
+from datetime import timedelta
+from database import requests as rq
+from utils.error_handling import error_handler
 router = Router()
 router.message.filter(F.chat.type != "private")
 
 
-@router.message(Command("ban"))
-async def func_ban(message: Message, command: CommandObject, bot: Bot):
-    reply_message = message.reply_to_message
-
-    if not reply_message:
-        return await message.reply('Для применения команды /ban требуется ответить на сообщение пользователя')
+@router.message(Command('ban'))
+@error_handler
+async def into_command_ban_user(message: Message, command: CommandObject, bot: Bot):
+    logging.info('into_command_ban_user')
     if not await is_admin(message, bot):
-        await message.reply("Для использования команды /ban бот должен быть администратором в канале,"
+        await message.reply("Для использования этой команды бот должен быть администратором в канале,"
                             " а вы администратором или владельцем")
         return
+    user_identifier = 0
+    if not command.args:
+        await message.answer('Для применения команды ban требуется указать к кому и по какой причине она применяется')
+        return
+    args: list = command.args.split(" ", 1)
+    if args:
+        user_identifier = args[0]
+        if not user_identifier and not message.reply_to_message:
+            await message.answer("Кого банить? Ответьте на сообщение, укажите @username или ID пользователя.")
+            return
+        reason: str = " ".join(args[1:]) if len(args) > 1 else ""
+        if not reason:
+            await message.answer("Укажите причину ban")
+            return
 
-    date = parse_time(command.args)
-    mention = reply_message.from_user.mention_html(reply_message.from_user.first_name)
+    try:
+        if user_identifier:
+            try:
+                user_id = int(user_identifier)
+            except ValueError:
+                user = await rq.get_user_username(username=user_identifier.replace("@", ""))
+                if user:
+                    user_id = user.tg_id
+                else:
+                    await message.reply("Пользователь c таким username не найден в БД, попробуйте применить"
+                                        " команду использую ID пользователя")
+                    return
+        else:
+            user_id = message.reply_to_message.from_user.id
+            user = await rq.get_user_tg_id(tg_id=user_id)
 
-    with suppress(TelegramBadRequest):
-        await bot.ban_chat_member(chat_id=message.chat.id, user_id=reply_message.from_user.id, until_date=date)
-        await message.answer(f" Пользователь <b>{mention}</b> был заблокирован!")
+        if user_id:
+            groups = await rq.get_groups()
+            for group in groups:
+                member = await bot.get_chat_member(user_id=message.from_user.id,
+                                                   chat_id=group.group_id)
+                if member.status != 'left':
+                    await bot.ban_chat_member(chat_id=group.group_id, user_id=user_id)
+            admin = await rq.get_user_tg_id(tg_id=message.from_user.id)
+            await message.answer(f"Администратор <a href='tg://user?id={message.from_user.id}'>"
+                                 f"{admin.name}</a> заблокировал <a href='tg://user?id={user_id}'>"
+                                 f"{user.name}</a> по причине: {reason}")
+                
+        else:
+            await message.reply("Пользователь не найден.")
+    except Exception as e:
+        await message.reply(f"Не удалось забанить пользователя. Ошибка: {e}")
+

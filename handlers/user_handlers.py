@@ -1,17 +1,15 @@
-import datetime
-
-from aiogram import Router, F
+from aiogram import Router, Bot, F
 from aiogram.types import Message
-from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
-from aiogram.filters import StateFilter, CommandStart
+from aiogram.filters import CommandStart
+
 from database import requests as rq
+from keyboards.keyboard import main_keyboard
+import logging
+from utils.error_handling import error_handler
 
 router = Router()
-# Текст приветствия
-start_text = """
-Добро пожаловать! Вас приветствует БОТ! Пройдите регистрацию по ссылке {ссылка}.
-"""
+router.message.filter(F.chat.type == "private")
 
 
 # Определение состояний
@@ -21,61 +19,42 @@ class Registration(StatesGroup):
 
 
 @router.message(CommandStart())
-async def start(message: Message, state: FSMContext) -> None:
-    """
-    Запуск бота
-    :param message:
-    :param state:
-    :return:
-    """
-    tg_id = message.chat.id
-    await state.set_state(state=None)
-    if not rq.check_user(tg_id=tg_id):
-        if message.from_user.username:
-            username = message.from_user.username
-        else:
-            username = "Ник отсутствует"
-        rq.add_user(tg_id=tg_id, username=username)
-        await message.answer("Здравствуйте это тг бот для регистрации, как вас зовут?")
-        await state.set_state(Registration.name)
+@error_handler
+async def process_press_start(message: Message, bot: Bot) -> None:
+    logging.info('process_press_start')
+    tg_id: int = message.from_user.id
+    username: str = message.from_user.username
+    user = await rq.get_user_tg_id(tg_id=tg_id)
+    if not user:
+        if not username:
+            username = 'Username'
+        data = {"tg_id": message.chat.id, "username": username}
+        await rq.add_new_user(data=data)
+        await message.answer("Здравствуйте. Пройдите опрос через команду /opros, чтобы получить ссылку на основной чат.")
+
     else:
-        user = rq.get_user(tg_id=tg_id)
-        await message.reply("Вас приветствует бот!")
-        await message.answer(f"Здравствуйте, {user[2]}")
+        # Проверка на недостающие поля
+        missing_fields = []
+        if not user.age:
+            missing_fields.append("Возраст")
+        if not user.nickname:
+            missing_fields.append("Nickname")
+        if not user.name:
+            missing_fields.append("Имя")
+        if not user.id_PUBG_MOBILE:
+            missing_fields.append("ID")
 
-
-@router.message(F.text, StateFilter(Registration.name))
-async def get_name(message: Message, state: FSMContext) -> None:
-    """
-    РЕГИСТРАЦИЯ - получаем имя пользователя
-    :param message:
-    :param state:
-    :return:
-    """
-    name, tg_id = message.text, message.chat.id
-    rq.set_user_name(tg_id=tg_id, name=name)
-    await message.reply('Укажите ваш возраст')
-    await state.set_state(Registration.age)
-
-
-@router.message(F.text, StateFilter(Registration.age))
-async def get_name(message: Message, state: FSMContext) -> None:
-    """
-    РЕГИСТРАЦИЯ - получаем имя пользователя
-    :param message:
-    :param state:
-    :return:
-    """
-    age_str, tg_id = message.text, message.chat.id
-    try:
-        age = int(age_str)
-        if 0 > age or age > 100:
-            await message.answer(text='Не корректно указан возраст. Повторите ввод')
-            return
-    except:
-        await message.answer(text='Введите число')
-        return
-    today = datetime.datetime.today().strftime("%d/%m/%Y")
-    rq.set_user_age(tg_id=tg_id, age=age, data_registration=today)
-    await message.reply('Благодарю за регистрацию')
-    await state.set_state(state=None)
+        # Отправка сообщения о недостающих данных
+        if missing_fields:
+            fields_text = ", ".join(missing_fields)
+            await message.answer(f"У вас не указаны следующие данные: {fields_text} \n"
+                                 f"Заполните их применив команду /opros")
+    groups = await rq.get_groups()
+    auth = False
+    for group in groups:
+        member = await bot.get_chat_member(user_id=message.from_user.id,
+                                           chat_id=group.group_id)
+        if member.status != 'left':
+            auth = True
+    await message.answer(f"Здравствуйте, {user.name}",
+                         reply_markup=main_keyboard(auth=auth))

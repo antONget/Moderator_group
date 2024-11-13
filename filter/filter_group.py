@@ -1,3 +1,5 @@
+import logging
+
 from aiogram.enums.chat_member_status import ChatMemberStatus
 from aiogram.types import Message
 from aiogram import Bot
@@ -8,7 +10,16 @@ import re
 async def is_admin(message: Message, bot: Bot):
     member = await bot.get_chat_member(message.chat.id, message.from_user.id)
     bot = await bot.get_chat_member(message.chat.id, bot.id)
-    if member.status not in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR] or bot.status != ChatMemberStatus.ADMINISTRATOR:
+    if member.status not in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR] or\
+            bot.status != ChatMemberStatus.ADMINISTRATOR:
+        return False
+    return True
+
+
+async def is_admin_bot_in_group(message: Message, bot: Bot) -> bool:
+    logging.info('is_admin_bot_in_group')
+    bot = await bot.get_chat_member(chat_id=message.chat.id, user_id=bot.id)
+    if bot.status != ChatMemberStatus.ADMINISTRATOR:
         return False
     return True
 

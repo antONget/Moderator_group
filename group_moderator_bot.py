@@ -10,15 +10,17 @@ from aiogram.types import ErrorEvent
 import traceback
 from typing import Any, Dict
 from config_data.config import Config, load_config
-from handlers import other_handlers, user_handlers, info, kick, ban, unban, mute, unmute
-from database import requests as rq
+from handlers import other_handlers, user_handlers, info, kick, ban, unban, mute, unmute, includ, opros, set_lider
+from middleware.throttling import ThrottlingMiddleware
+from database.models import async_main
 # Инициализируем logger
 logger = logging.getLogger(__name__)
+from aiogram.methods.get_chat_member import GetChatMember
 
 
 # Функция конфигурирования и запуска бота
 async def main():
-    # rq.create_table_users()
+    await async_main()
     # Конфигурируем логирование
     logging.basicConfig(
         level=logging.INFO,
@@ -38,8 +40,11 @@ async def main():
     dp = Dispatcher()
     # Регистрируем router в диспетчере
     dp.include_router(user_handlers.router)
-    dp.include_routers(info.router, kick.router, ban.router, unban.router, mute.router, unmute.router)
+    dp.include_routers(info.router, kick.router, ban.router, unban.router, mute.router, unmute.router,  includ.router, opros.router, set_lider.router)
     dp.include_router(other_handlers.router)
+
+    dp.callback_query.middleware(ThrottlingMiddleware())
+    dp.message.middleware(ThrottlingMiddleware())
 
     @dp.error()
     async def error_handler(event: ErrorEvent, data: Dict[str, Any]):

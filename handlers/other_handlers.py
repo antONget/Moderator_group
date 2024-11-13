@@ -15,7 +15,7 @@ async def all_callback(callback: CallbackQuery) -> None:
 
 @router.message()
 async def all_message(message: Message) -> None:
-    logging.info(f'all_message')
+    logging.info(f'all_message {message.text}')
     if message.photo:
         logging.info(f'all_message message.photo')
         logging.info(message.photo[-1].file_id)

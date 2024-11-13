@@ -1,30 +1,50 @@
-from aiogram import Router, F
-from aiogram.types import Message
+import logging
 
+from aiogram import Router, F, Bot
+from aiogram.types import Message
 from database import requests as rq
+from database.models import User
+from utils.error_handling import error_handler
+from aiogram.filters import CommandObject, Command
 
 router = Router()
 router.message.filter(F.chat.type != "private")
 
 
-@router.message(F.text == '/info')
-async def info(message: Message) -> None:
-    your_id = message.from_user.id
-    your_name = message.from_user.username
+@router.message(Command('info'))
+@error_handler
+async def into_command_info(message: Message, bot: Bot, command: CommandObject) -> None:
+    logging.info('into_command_info')
+    user_identifier = command.args
+
+    if not user_identifier and not message.reply_to_message:
+        await message.reply('Для применения команды /info требуется ответить на сообщение'
+                            ' пользователя или прислать его username')
+        return
     try:
-        friend_name = message.reply_to_message.from_user.username
-        friend_id = message.reply_to_message.from_user.id
-        user = rq.get_user(tg_id=friend_id)
-        if user:
-            await message.answer(text=f'Ник: {user[1]}\n'
-                                      f'ID: <code>{user[0]}</code>\n'
-                                      f'Имя: <a href="tg://user?id={user[0]}">{user[2]}</a>\n'
-                                      f'Возраст: {user[3]}\n'
-                                      f'Честь: {user[4]}\n'
-                                      f'В клане с {user[5]}')
+        if user_identifier:
+            try:
+                user_id = int(user_identifier)
+            except ValueError:
+                user = await rq.get_user_username(username=user_identifier.replace('@', ''))
+                if user:
+                    user_id = user.tg_id
+                else:
+                    await message.reply("Пользователь c таким username не найден в БД, попробуйте применить"
+                                        " команду использую ID пользователя")
+                    return
         else:
-            await message.answer(text='Информации о пользователе в БД нет')
-    except:
-        pass
-
-
+            user_id = message.reply_to_message.from_user.id
+        if user_id:
+            user: User = await rq.get_user_tg_id(tg_id=user_id)
+            if user:
+                await message.answer(text=f'Ник: {user.nickname}\n'
+                                          f'ID: <code>{user.id_PUBG_MOBILE}</code>\n'
+                                          f'Имя: <a href="tg://user?id={user.tg_id}">{user.name}</a>\n'
+                                          f'Возраст: {user.age}\n'
+                                          f'Честь: {user.honor}\n'
+                                          f'В клане с {user.data_registration}')
+            else:
+                await message.reply("Пользователь не найден.")
+    except Exception as e:
+        await message.reply(f"Не удалось получить информацию о пользователе. Ошибка: {e}")
