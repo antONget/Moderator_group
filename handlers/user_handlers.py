@@ -56,6 +56,7 @@ async def process_press_start(message: Message, bot: Bot) -> None:
                                            chat_id=group.group_id)
         if member.status != 'left':
             auth = True
+    user = await rq.get_user_tg_id(tg_id=tg_id)
     if user.name:
         await message.answer(f"Здравствуйте, {user.name}",
                              reply_markup=main_keyboard(auth=auth))
