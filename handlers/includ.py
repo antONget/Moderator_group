@@ -15,7 +15,7 @@ router = Router()
 router.message.filter(F.chat.type != "private")
 
 
-@router.message(Command('add_group'))
+@router.message(Command('set_group'))
 @error_handler
 async def process_add_group(message: Message, command: CommandObject, bot: Bot):
     logging.info('process_add_group')
@@ -31,14 +31,13 @@ async def process_add_group(message: Message, command: CommandObject, bot: Bot):
     if not groups:
         data = {"group_id": chat_id, "group_clan": "clan", "group_link": group_link}
         await rq.add_new_group(data=data)
-        await bot.send_message(chat_id=chat_id,
-                               text='Группа добавлена в проект')
+        await message.reply(text='Группа добавлена в проект')
         return
     else:
         await message.answer('Группа уже есть в базе')
 
 
-@router.message(Command('add_group_general'))
+@router.message(Command('set_group_general'))
 @error_handler
 async def process_add_group_general(message: Message, command: CommandObject, bot: Bot):
     logging.info('process_add_group_general')
@@ -56,10 +55,8 @@ async def process_add_group_general(message: Message, command: CommandObject, bo
     if not group:
         data = {"group_id": chat_id, "group_clan": "general", "group_link": group_link}
         await rq.add_new_group(data=data)
-        await bot.send_message(chat_id=chat_id,
-                               text='Группа добавлена как основная')
+        await message.reply(text='Группа добавлена как основная')
         return
     else:
         await rq.update_group_general(group_id=chat_id, group_link=group_link)
-        await bot.send_message(chat_id=chat_id,
-                               text='Основная группа обновлена')
+        await message.reply(text='Основная группа обновлена')

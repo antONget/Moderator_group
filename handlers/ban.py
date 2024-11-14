@@ -59,8 +59,8 @@ async def into_command_ban_user(message: Message, command: CommandObject, bot: B
                     await bot.ban_chat_member(chat_id=group.group_id, user_id=user_id)
             admin = await rq.get_user_tg_id(tg_id=message.from_user.id)
             await message.answer(f"Администратор <a href='tg://user?id={message.from_user.id}'>"
-                                 f"{admin.name}</a> заблокировал <a href='tg://user?id={user_id}'>"
-                                 f"{user.name}</a> по причине: {reason}")
+                                 f"{message.from_user.full_name}</a> заблокировал <a href='tg://user?id={user_id}'>"
+                                 f"{user.nickname}</a> по причине: {reason}")
                 
         else:
             await message.reply("Пользователь не найден.")

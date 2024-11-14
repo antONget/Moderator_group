@@ -1,25 +1,30 @@
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
 
 
-def main_keyboard(auth: bool) -> ReplyKeyboardMarkup:
-    button_1 = KeyboardButton(text="О клане")
-    button_2 = KeyboardButton(text="Правила клана")
-    button_3 = KeyboardButton(text="Правила пранков")
-    button_4 = KeyboardButton(text="Набор в клан")
-    button_5 = KeyboardButton(text="Перевод")
-    button_6 = KeyboardButton(text="Рейтинг")
-    button_7 = KeyboardButton(text="Активности")
-    button_8 = KeyboardButton(text="Жалоба")
-    button_9 = KeyboardButton(text="Отпуск")
+def keyboard_main_button() -> ReplyKeyboardMarkup:
+    button_1 = KeyboardButton(text='Главное меню')
+    keyboard = ReplyKeyboardMarkup(keyboard=[[button_1]],
+                                   resize_keyboard=True)
+    return keyboard
+
+
+def main_keyboard(auth: bool) -> InlineKeyboardMarkup:
+    button_1 = InlineKeyboardButton(text="О клане", callback_data='about_clan')
+    button_2 = InlineKeyboardButton(text="Правила клана", callback_data='rule_clan')
+    button_3 = InlineKeyboardButton(text="Правила пранков", callback_data='rule_prank')
+    button_4 = InlineKeyboardButton(text="Набор в клан", callback_data='recruting_clan')
+    button_5 = InlineKeyboardButton(text="Перевод", callback_data='rule_prank')
+    button_6 = InlineKeyboardButton(text="Рейтинг", callback_data='honor')
+    button_7 = InlineKeyboardButton(text="Активности", callback_data='activity')
+    button_8 = InlineKeyboardButton(text="Жалоба", callback_data=' ')
+    button_9 = InlineKeyboardButton(text="Отпуск", callback_data=' ')
     if not auth:
-        keyboard = ReplyKeyboardMarkup(
-            keyboard=[[button_1], [button_2], [button_3], [button_4]],
-            resize_keyboard=True
+        keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[[button_1], [button_2], [button_4]]
         )
     else:
-        keyboard = ReplyKeyboardMarkup(
-            keyboard=[[button_1], [button_2], [button_3], [button_5], [button_6], [button_7], [button_8], [button_9]],
-            resize_keyboard=True
+        keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[[button_1], [button_2], [button_5], [button_6], [button_7], [button_8], [button_9]]
         )
     return keyboard
 

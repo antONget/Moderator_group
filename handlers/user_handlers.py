@@ -19,6 +19,7 @@ class Registration(StatesGroup):
 
 
 @router.message(CommandStart())
+@router.message(F.text == 'Главное меню')
 @error_handler
 async def process_press_start(message: Message, bot: Bot) -> None:
     logging.info('process_press_start')
@@ -30,25 +31,23 @@ async def process_press_start(message: Message, bot: Bot) -> None:
             username = 'Username'
         data = {"tg_id": message.chat.id, "username": username}
         await rq.add_new_user(data=data)
-        await message.answer("Здравствуйте. Пройдите опрос через команду /opros, чтобы получить ссылку на основной чат.")
-
-    else:
-        # Проверка на недостающие поля
-        missing_fields = []
-        if not user.age:
-            missing_fields.append("Возраст")
-        if not user.nickname:
-            missing_fields.append("Nickname")
-        if not user.name:
-            missing_fields.append("Имя")
-        if not user.id_PUBG_MOBILE:
-            missing_fields.append("ID")
-
-        # Отправка сообщения о недостающих данных
-        if missing_fields:
-            fields_text = ", ".join(missing_fields)
-            await message.answer(f"У вас не указаны следующие данные: {fields_text} \n"
-                                 f"Заполните их применив команду /opros")
+    # else:
+    #     # Проверка на недостающие поля
+    #     missing_fields = []
+    #     if not user.age:
+    #         missing_fields.append("Возраст")
+    #     if not user.nickname:
+    #         missing_fields.append("Nickname")
+    #     if not user.name:
+    #         missing_fields.append("Имя")
+    #     if not user.id_PUBG_MOBILE:
+    #         missing_fields.append("ID")
+    #
+    #     # Отправка сообщения о недостающих данных
+    #     if missing_fields:
+    #         fields_text = ", ".join(missing_fields)
+    #         await message.answer(f"У вас не указаны следующие данные: {fields_text} \n"
+    #                              f"Заполните их применив команду /opros")
     groups = await rq.get_groups()
     auth = False
     for group in groups:
@@ -63,3 +62,6 @@ async def process_press_start(message: Message, bot: Bot) -> None:
     else:
         await message.answer(f"Здравствуйте!",
                              reply_markup=main_keyboard(auth=auth))
+    if auth:
+        await message.answer(
+            "Здравствуйте. Пройдите опрос через команду /opros, чтобы получить ссылку на основной чат.")
