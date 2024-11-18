@@ -3,10 +3,11 @@ import logging
 from aiogram import Router, F, Bot
 from database import requests as rq
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, ChatInviteLink
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.filters import Command, StateFilter
 
+from keyboards.keyboard import keyboard_main_button
 from keyboards.keyboard import keyboard_pass_opros
 from utils.error_handling import error_handler
 
@@ -26,6 +27,15 @@ class Registration(StatesGroup):
 @error_handler
 async def into_command_opros(message: Message, state: FSMContext, bot: Bot):
     logging.info('into_command_opros')
+    groups = await rq.get_groups()
+    for group in groups:
+        member = await bot.get_chat_member(user_id=message.from_user.id,
+                                           chat_id=group.group_id)
+        if member.status != 'left':
+            break
+    else:
+        await message.answer('Вас нет в тг группах')
+        return
     user = await rq.get_user_tg_id(tg_id=message.from_user.id)
     if not user.age:
         await message.answer("Сколько вам лет? (принимаются только цифры)")
@@ -34,6 +44,10 @@ async def into_command_opros(message: Message, state: FSMContext, bot: Bot):
             " Сколько вам лет? (принимаются только цифры)",
             reply_markup=keyboard_pass_opros(callback='button1')
         )
+
+
+
+
     await state.set_state(Registration.year)
 
 
@@ -60,7 +74,11 @@ async def get_age(message: Message, state: FSMContext, bot: Bot):
     if not message.text.isdigit():
         await message.answer("Пожалуйста, введите корректный возраст.")
         return
-    age = int(message.text)
+    try:
+        age = int(message.text)
+    except:
+        await message.answer(text='Пожалуйста, введите корректный возраст.')
+        return
     try:
         if 0 > age or age > 100:
             await message.answer(text='Не корректно указан возраст. Повторите ввод')
@@ -68,7 +86,6 @@ async def get_age(message: Message, state: FSMContext, bot: Bot):
     except:
         await message.answer(text='Введите число')
         return
-
     await rq.update_user_age(age=age, tg_id=message.from_user.id)
     user = await rq.get_user_tg_id(tg_id=message.from_user.id)
     if not user.name:
@@ -119,6 +136,18 @@ async def get_nickname(message: Message, state: FSMContext, bot: Bot):
     logging.info('get_nickname')
     await rq.update_user_nickname(tg_id=message.from_user.id, nickname=message.text)
     general_group = await rq.get_groups_general()
-    await message.answer(text=f'Вы прошли регистрацию, вот ссылка на группу:'
-                              f' <a href="{general_group.group_link}">общая группа</a>', parse_mode="HTML")
+    member = await bot.get_chat_member(user_id=message.from_user.id,
+                                       chat_id=general_group.group_id)
+    if member.status == 'left':
+        invite_link: ChatInviteLink = await bot.create_chat_invite_link(
+                chat_id=general_group.group_id,
+                name="Одноразовая ссылка",
+                member_limit=1  # Ограничение: 1 пользователь
+            )
+        await message.answer(text=f'Вы прошли регистрацию, вот ссылка на группу:'
+                                  f' <a href="{invite_link.invite_link}">общая группа</a>',
+                             parse_mode="HTML",
+                             reply_markup=keyboard_main_button())
+    else:
+        await message.answer("Вы обновили свои данные")
     await state.set_state(state=None)

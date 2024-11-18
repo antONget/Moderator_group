@@ -54,7 +54,8 @@ async def into_command_kick_user(message: Message, command: CommandObject, bot: 
                 member = await bot.get_chat_member(user_id=message.from_user.id,
                                                    chat_id=group.group_id)
                 if member.status != 'left':
-                    await bot.ban_chat_member(chat_id=group.group_id, user_id=user_id, until_date=60)
+                    await bot.ban_chat_member(chat_id=group.group_id, user_id=user_id)
+                    await bot.unban_chat_member(chat_id=group.group_id, user_id=user_id)
             admin = await rq.get_user_tg_id(tg_id=message.from_user.id)
             await message.answer(f"Администратор <a href='tg://user?id={message.from_user.id}'>"
                                  f"{message.from_user.full_name}</a> кикнул <a href='tg://user?id={user_id}'>"
