@@ -7,6 +7,7 @@ from aiogram.filters import Command, CommandObject
 from datetime import timedelta
 from database import requests as rq
 from utils.error_handling import error_handler
+
 router = Router()
 router.message.filter(F.chat.type != "private")
 
@@ -15,7 +16,7 @@ router.message.filter(F.chat.type != "private")
 @error_handler
 async def into_command_ban_user(message: Message, command: CommandObject, bot: Bot):
     logging.info('into_command_ban_user')
-    await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
+    await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)  # Удаление сообщения
     if not await is_admin(message, bot):
         await message.reply("Для использования этой команды бот должен быть администратором в канале,"
                             " а вы администратором или владельцем")
@@ -30,10 +31,13 @@ async def into_command_ban_user(message: Message, command: CommandObject, bot: B
         if not user_identifier and not message.reply_to_message:
             await message.answer("Кого банить? Ответьте на сообщение, укажите @username или ID пользователя.")
             return
+        reason_: str = " ".join(args[0:]) if len(args) > 1 else ""
         reason: str = " ".join(args[1:]) if len(args) > 1 else ""
-        if not reason:
-            await message.answer("Укажите причину ban")
+        if not reason and not message.reply_to_message.from_user.id:
+            await message.answer("Укажите причину kick")
             return
+        else:
+            reason = reason_
 
     try:
         if user_identifier:
@@ -62,7 +66,7 @@ async def into_command_ban_user(message: Message, command: CommandObject, bot: B
             await message.answer(f"Администратор <a href='tg://user?id={message.from_user.id}'>"
                                  f"{message.from_user.full_name}</a> заблокировал <a href='tg://user?id={user_id}'>"
                                  f"{user.nickname}</a> по причине: {reason}")
-                
+
         else:
             await message.reply("Пользователь не найден.")
     except Exception as e:

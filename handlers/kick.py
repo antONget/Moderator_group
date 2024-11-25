@@ -31,10 +31,13 @@ async def into_command_kick_user(message: Message, command: CommandObject, bot: 
         if not user_identifier and not message.reply_to_message:
             await message.answer("Кого удалять? Ответьте на сообщение, укажите @username или ID пользователя.")
             return
+        reason_: str = " ".join(args[0:]) if len(args) > 1 else ""
         reason: str = " ".join(args[1:]) if len(args) > 1 else ""
-        if not reason:
+        if not reason and not message.reply_to_message.from_user.id:
             await message.answer("Укажите причину kick")
             return
+        else:
+            reason = reason_
     try:
         if user_identifier:
             try:
@@ -63,7 +66,7 @@ async def into_command_kick_user(message: Message, command: CommandObject, bot: 
             await message.answer(f"Администратор <a href='tg://user?id={message.from_user.id}'>"
                                  f"{message.from_user.full_name}</a> кикнул <a href='tg://user?id={user_id}'>"
                                  f"{user.nickname}</a> по причине: {reason}")
-                
+
         else:
             await message.reply("Пользователь не найден.")
     except Exception as e:
