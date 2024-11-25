@@ -10,6 +10,7 @@ router.message.filter(F.chat.type != "private")
 
 @router.message(Command("unban"))
 async def func_unban(message: Message, bot: Bot, command: CommandObject):
+    await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
     if not await is_admin(message, bot):
         await message.reply("Для использования этой команды бот должен быть администратором в канале,"
                             " а вы администратором или владельцем")

@@ -15,8 +15,8 @@ router.message.filter(F.chat.type != "private")
 @error_handler
 async def into_command_info(message: Message, bot: Bot, command: CommandObject) -> None:
     logging.info('into_command_info')
+    await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)  # Удаление сообщения
     user_identifier = command.args
-
     if not user_identifier and not message.reply_to_message:
         await message.reply('Для применения команды /info требуется ответить на сообщение'
                             ' пользователя или прислать его username')
@@ -38,7 +38,9 @@ async def into_command_info(message: Message, bot: Bot, command: CommandObject) 
         if user_id:
             user: User = await rq.get_user_tg_id(tg_id=user_id)
             if user:
-                await message.answer(text=f'Ник: {user.nickname}\n'
+
+                await message.answer(text=f'Клан: {user.clan_name}\n\n'
+                                          f'Ник: {user.nickname}\n'
                                           f'ID: <code>{user.id_PUBG_MOBILE}</code>\n'
                                           f'Имя: <a href="tg://user?id={user.tg_id}">{user.name}</a>\n'
                                           f'Возраст: {user.age}\n'

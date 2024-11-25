@@ -54,6 +54,14 @@ async def update_user_name(tg_id: int, name: str) -> None:
         await session.commit()
 
 
+async def update_username(tg_id: int, username: str) -> None:
+    logging.info(f'update_user_name')
+    async with async_session() as session:
+        user = await session.scalar(select(User).where(User.tg_id == tg_id))
+        user.username = username
+        await session.commit()
+
+
 async def update_user_id_pubg(tg_id: int, id_pubg: int) -> None:
     logging.info(f'update_user_id_pubg')
     async with async_session() as session:

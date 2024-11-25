@@ -1,16 +1,22 @@
-from aiogram import Router, Bot
+from aiogram import Router, Bot, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.types import FSInputFile
 from database import requests as rq
 import logging
+import asyncio
 
 router = Router()
+
+
+
+
 
 
 @router.callback_query()
 async def all_callback(callback: CallbackQuery) -> None:
     logging.info(f'all_callback: {callback.message.chat.id}')
     logging.info(callback.data)
+
 
 
 @router.message()
@@ -23,6 +29,13 @@ async def all_message(message: Message, bot: Bot) -> None:
         await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
         general_group = await rq.get_groups_general()
         await bot.ban_chat_member(chat_id=general_group.group_id, user_id=message.from_user.id)
+        await asyncio.sleep(5)
+        await bot.unban_chat_member(chat_id=general_group.group_id, user_id=message.from_user.id)
+
+    if message.kicked_chat_member:  # Кикнули участника
+        general_group = await rq.get_groups_general()
+        await bot.ban_chat_member(chat_id=general_group.group_id, user_id=message.from_user.id)
+        await asyncio.sleep(5)
         await bot.unban_chat_member(chat_id=general_group.group_id, user_id=message.from_user.id)
 
     if message.new_chat_title:  # Новое название чата
@@ -55,6 +68,10 @@ async def all_message(message: Message, bot: Bot) -> None:
     general_group = await rq.get_groups_general()
     member = await bot.get_chat_member(user_id=message.from_user.id,
                                        chat_id=general_group.group_id)
+
+    user = await rq.get_user_tg_id(tg_id=message.from_user.id)
+    if user.username != message.from_user.username:  # Проверка актуальности username
+        await rq.update_username(tg_id=message.from_user.id, username=message.from_user.username)
     if member.status == 'left':
         await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
         await message.answer('К сожалению, вы не состоите в общем чате клана и отправка сообщений вам не доступна.\n\n'

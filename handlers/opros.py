@@ -133,6 +133,7 @@ async def get_number(message: Message, state: FSMContext, bot: Bot):
 @router.message(F.text, StateFilter(Registration.nickname))
 @error_handler
 async def get_nickname(message: Message, state: FSMContext, bot: Bot):
+    await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
     logging.info('get_nickname')
     await rq.update_user_nickname(tg_id=message.from_user.id, nickname=message.text)
     general_group = await rq.get_groups_general()

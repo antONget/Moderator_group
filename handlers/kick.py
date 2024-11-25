@@ -1,4 +1,5 @@
 import logging
+import asyncio
 
 from aiogram import Router, Bot, F
 from aiogram.types import Message
@@ -15,6 +16,7 @@ router.message.filter(F.chat.type != "private")
 @error_handler
 async def into_command_kick_user(message: Message, command: CommandObject, bot: Bot):
     logging.info('into_command_kick_user')
+    await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)  # Удаление сообщения
     if not await is_admin(message, bot):
         await message.reply("Для использования этой команды бот должен быть администратором в канале,"
                             " а вы администратором или владельцем")
@@ -55,6 +57,7 @@ async def into_command_kick_user(message: Message, command: CommandObject, bot: 
                                                    chat_id=group.group_id)
                 if member.status != 'left':
                     await bot.ban_chat_member(chat_id=group.group_id, user_id=user_id)
+                    await asyncio.sleep(5)
                     await bot.unban_chat_member(chat_id=group.group_id, user_id=user_id)
             admin = await rq.get_user_tg_id(tg_id=message.from_user.id)
             await message.answer(f"Администратор <a href='tg://user?id={message.from_user.id}'>"

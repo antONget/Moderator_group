@@ -19,6 +19,7 @@ router.message.filter(F.chat.type != "private")
 @error_handler
 async def process_add_group(message: Message, command: CommandObject, bot: Bot):
     logging.info('process_add_group')
+    await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)  # Удаление сообщения
     group_link = command.args
     chat_id = message.chat.id
     if not await is_admin_bot_in_group(message=message, bot=bot) or not await check_super_admin(telegram_id=message.from_user.id):

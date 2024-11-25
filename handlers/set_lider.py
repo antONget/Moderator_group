@@ -20,6 +20,7 @@ router.message.filter(F.chat.type != "private")
 @error_handler
 async def into_command_set_lider(message: Message, command: CommandObject, bot: Bot):
     logging.info('into_command_set_lider')
+    await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
     if not await is_admin(message, bot):
         await message.reply("Для использования этой команды бот должен быть администратором в канале,"
                             " а вы администратором или владельцем")

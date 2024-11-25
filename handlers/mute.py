@@ -12,6 +12,7 @@ router.message.filter(F.chat.type != "private")
 
 @router.message(Command("mute"))
 async def func_mute(message: Message, command: CommandObject, bot: Bot):
+    await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
     reply_message = message.reply_to_message
     mention = reply_message.from_user.mention_html(reply_message.from_user.first_name)
 

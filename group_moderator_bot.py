@@ -10,7 +10,7 @@ from aiogram.types import ErrorEvent
 import traceback
 from typing import Any, Dict
 from config_data.config import Config, load_config
-from handlers import other_handlers, user_handlers, info, kick, ban, unban, mute, unmute, includ, opros, set_lider
+from handlers import other_handlers, user_handlers, info, kick, ban, unban, mute, unmute, includ, opros, set_lider, list
 from middleware.throttling import ThrottlingMiddleware
 from database.models import async_main
 # Инициализируем logger
@@ -40,7 +40,7 @@ async def main():
     dp = Dispatcher()
     # Регистрируем router в диспетчере
     dp.include_router(user_handlers.router)
-    dp.include_routers(info.router, kick.router, ban.router, unban.router, mute.router, unmute.router,  includ.router, opros.router, set_lider.router)
+    dp.include_routers(info.router, kick.router, ban.router, unban.router, mute.router, unmute.router,  includ.router, opros.router, set_lider.router, list.router)
     dp.include_router(other_handlers.router)
 
     dp.callback_query.middleware(ThrottlingMiddleware())
