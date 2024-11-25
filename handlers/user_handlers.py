@@ -31,6 +31,8 @@ async def process_press_start(message: Message, bot: Bot) -> None:
             username = 'Username'
         data = {"tg_id": message.chat.id, "username": username}
         await rq.add_new_user(data=data)
+    if username != user.username:
+        await rq.update_username(username)
     # else:
     #     # Проверка на недостающие поля
     #     missing_fields = []
