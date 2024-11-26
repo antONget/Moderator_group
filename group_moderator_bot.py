@@ -39,6 +39,7 @@ async def main():
     bot = Bot(token=config.tg_bot.token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     dp = Dispatcher()
     # Регистрируем router в диспетчере
+    dp.include_router(other_handlers.router)
     dp.include_router(user_handlers.router)
     dp.include_routers(info.router, kick.router, ban.router, unban.router, mute.router, unmute.router,  includ.router, opros.router, set_lider.router, list.router)
     dp.include_router(other_handlers.router)
