@@ -23,8 +23,8 @@ class Registration(StatesGroup):
 @error_handler
 async def process_press_start(message: Message, bot: Bot) -> None:
     logging.info('process_press_start')
-    file_path = "database/db.sqlite3"
-    await message.answer_document(FSInputFile(file_path))
+    # file_path = "database/db.sqlite3"
+    # await message.answer_document(FSInputFile(file_path))
     tg_id: int = message.from_user.id
     username: str = message.from_user.username
     user = await rq.get_user_tg_id(tg_id=tg_id)
