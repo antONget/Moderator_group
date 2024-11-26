@@ -26,7 +26,7 @@ class User(Base):
     id_PUBG_MOBILE: Mapped[int] = mapped_column(Integer(), default=0)
     role: Mapped[str] = mapped_column(String(), default='user')
     clan_name: Mapped[str] = mapped_column(String(), default='None')
-
+    invitation: Mapped[str] = mapped_column(String(), default='None')
 
 class ClanGroup(Base):
     __tablename__ = "clan_groups"

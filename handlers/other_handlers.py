@@ -2,21 +2,17 @@ from aiogram import Router, Bot, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.types import FSInputFile
 from database import requests as rq
+
 import logging
 import asyncio
 
 router = Router()
 
 
-
-
-
-
 @router.callback_query()
 async def all_callback(callback: CallbackQuery) -> None:
     logging.info(f'all_callback: {callback.message.chat.id}')
     logging.info(callback.data)
-
 
 
 @router.message()
@@ -69,14 +65,18 @@ async def all_message(message: Message, bot: Bot) -> None:
     member = await bot.get_chat_member(user_id=message.from_user.id,
                                        chat_id=general_group.group_id)
 
+    if message.chat.id != general_group:
+        await rq.update_clan_name(tg_id=message.from_user.id, clan_name=message.chat.title)
+
+    if member.status == 'left':
+        await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
+        await message.answer(
+            'Вас нет в основной группе пройдите опрос в боте через команду /opros и перейдите по ссылке')
+        return
+
     user = await rq.get_user_tg_id(tg_id=message.from_user.id)
     if user.username != message.from_user.username:  # Проверка актуальности username
         await rq.update_username(tg_id=message.from_user.id, username=message.from_user.username)
-    if member.status == 'left':
-        await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
-        await message.answer('К сожалению, вы не состоите в общем чате клана и отправка сообщений вам не доступна.\n\n'
-                             'Пройдите опрос в боте @clan_by_bot для добавления в общий чат клана.')
-        return
 
     if message.photo:
         logging.info(f'all_message message.photo')

@@ -15,6 +15,30 @@ async def get_user_tg_id(tg_id: int) -> User:
         return await session.scalar(select(User).where(User.tg_id == tg_id))
 
 
+async def update_username(tg_id: int, username: str) -> User:#обновление username
+    logging.info('update_username')
+    async with async_session() as session:
+        user = await session.scalar(select(User).where(User.tg_id == tg_id))
+        user.username = username
+        await session.commit()
+
+
+async def update_clan_name(tg_id: int, clan_name: str) -> User:#обновление username
+    logging.info('update_clan_name')
+    async with async_session() as session:
+        user = await session.scalar(select(User).where(User.tg_id == tg_id))
+        user.clan_name = clan_name
+        await session.commit()
+
+
+async def update_invitation(tg_id: int, invitation: str) -> User:#обновление username
+    logging.info('update_clan_name')
+    async with async_session() as session:
+        user = await session.scalar(select(User).where(User.tg_id == tg_id))
+        user.invitation = invitation
+        await session.commit()
+
+
 async def get_user_username(username: str) -> User:
     logging.info('get_user_username')
     async with async_session() as session:
@@ -54,14 +78,6 @@ async def update_user_name(tg_id: int, name: str) -> None:
         await session.commit()
 
 
-async def update_username(tg_id: int, username: str) -> None:
-    logging.info(f'update_user_name')
-    async with async_session() as session:
-        user = await session.scalar(select(User).where(User.tg_id == tg_id))
-        user.username = username
-        await session.commit()
-
-
 async def update_user_id_pubg(tg_id: int, id_pubg: int) -> None:
     logging.info(f'update_user_id_pubg')
     async with async_session() as session:
@@ -76,6 +92,14 @@ async def update_user_nickname(tg_id: int, nickname: str) -> None:
         user = await session.scalar(select(User).where(User.tg_id == tg_id))
         user.nickname = nickname
         await session.commit()
+
+
+async def get_users() -> list[User]:
+    logging.info('get_users')
+    async with async_session() as session:
+        users = await session.scalars(select(User))
+        users_list = [user for user in users]
+        return  users_list
 
 
 """GROUP"""
