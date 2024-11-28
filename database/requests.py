@@ -99,7 +99,7 @@ async def get_users() -> list[User]:
     async with async_session() as session:
         users = await session.scalars(select(User))
         users_list = [user for user in users]
-        return  users_list
+        return users_list
 
 
 """GROUP"""

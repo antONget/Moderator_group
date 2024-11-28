@@ -12,16 +12,6 @@ router = Router()
 router.message.filter(F.chat.type != "private")
 
 
-def format_users_for_message(users):
-    """
-    Формирует строку для отправки списка пользователей в Telegram.
-
-    :param users: список словарей с ключами "tg_id" и "name"
-    :return: строка, готовая для отправки в Telegram
-    """
-    return '\n'.join([f'<a href="tg://user?id={user["tg_id"]}">{user["nickname"]}</a>' for user in users])
-
-
 @router.message(Command('list'))
 async def into_command_list(message: Message, bot: Bot) -> None:
     logging.info('into_command_list')
@@ -31,15 +21,18 @@ async def into_command_list(message: Message, bot: Bot) -> None:
                             " а вы администратором или владельцем")
         return
 
-    users_dictinary = []  # Создание словаря
     users = await rq.get_users()
+    text = ''
+    i = 0
     for user in users:
-        member = await bot.get_chat_member(user_id=message.from_user.id,
-                                           chat_id=user.tg_id)
+        member = await bot.get_chat_member(user_id=user.tg_id,
+                                           chat_id=message.chat.id)
         if member.status != 'left':
-            nickname = await rq.get_user_tg_id(tg_id=user.tg_id)
-            users_dictinary.append({"tg_id": int(user.tg_id), "nickname": nickname.nickname})
-    message = format_users_for_message(users)
-    await message.answer(message)
+            if user.nickname:
+                i += 1
+                text += f'{i}. <a href="tg://user?id={user.tg_id}">{user.nickname}</a>\n'
+    if text != '':
+        await message.answer(text=text)
+    else:
+        await message.answer(text='Данные об участниках клана отсутствуют')
     return
-

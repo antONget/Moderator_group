@@ -28,11 +28,11 @@ async def all_message(message: Message, bot: Bot) -> None:
         await asyncio.sleep(5)
         await bot.unban_chat_member(chat_id=general_group.group_id, user_id=message.from_user.id)
 
-    if message.kicked_chat_member:  # Кикнули участника
-        general_group = await rq.get_groups_general()
-        await bot.ban_chat_member(chat_id=general_group.group_id, user_id=message.from_user.id)
-        await asyncio.sleep(5)
-        await bot.unban_chat_member(chat_id=general_group.group_id, user_id=message.from_user.id)
+    # if message.new_chat_member.status == 'kick':  # Кикнули участника
+    #     general_group = await rq.get_groups_general()
+    #     await bot.ban_chat_member(chat_id=general_group.group_id, user_id=message.from_user.id)
+    #     await asyncio.sleep(5)
+    #     await bot.unban_chat_member(chat_id=general_group.group_id, user_id=message.from_user.id)
 
     if message.new_chat_title:  # Новое название чата
         await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)

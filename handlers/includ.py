@@ -32,7 +32,7 @@ async def process_add_group(message: Message, command: CommandObject, bot: Bot):
     if not groups:
         data = {"group_id": chat_id, "group_clan": "clan", "group_link": group_link}
         await rq.add_new_group(data=data)
-        await message.reply(text='Группа добавлена в проект')
+        await message.answer(text='Группа добавлена в проект')
         return
     else:
         await message.answer('Группа уже есть в базе')

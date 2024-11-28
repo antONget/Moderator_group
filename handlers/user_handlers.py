@@ -22,7 +22,7 @@ class Registration(StatesGroup):
 @router.message(F.text == 'Главное меню')
 @error_handler
 async def process_press_start(message: Message, bot: Bot) -> None:
-    logging.info('process_press_start')
+    logging.info('process_press_start ')
     # file_path = "database/db.sqlite3"
     # await message.answer_document(FSInputFile(file_path))
     tg_id: int = message.from_user.id
@@ -33,8 +33,9 @@ async def process_press_start(message: Message, bot: Bot) -> None:
             username = 'Username'
         data = {"tg_id": message.chat.id, "username": username}
         await rq.add_new_user(data=data)
-    if username != user.username:
-        await rq.update_username(username)
+    elif username != user.username:
+        await rq.update_username(tg_id=message.from_user.id,
+                                 username=message.from_user.username)
     # else:
     #     # Проверка на недостающие поля
     #     missing_fields = []
