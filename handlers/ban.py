@@ -48,8 +48,8 @@ async def into_command_ban_user(message: Message, command: CommandObject, bot: B
                 if user:
                     user_id = user.tg_id
                 else:
-                    await message.reply("Пользователь c таким username не найден в БД, попробуйте применить"
-                                        " команду использую ID пользователя")
+                    await message.answer("Пользователь c таким username не найден в БД, попробуйте применить"
+                                         " команду использую ID пользователя")
                     return
         else:
             user_id = message.reply_to_message.from_user.id

@@ -18,8 +18,8 @@ async def into_command_info(message: Message, bot: Bot, command: CommandObject) 
     user_identifier = command.args
     await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)  # Удаление сообщения
     if not user_identifier and not message.reply_to_message:
-        await message.reply('Для применения команды /info требуется ответить на сообщение'
-                            ' пользователя или прислать его username')
+        await message.answer('Для применения команды /info требуется ответить на сообщение'
+                             ' пользователя или прислать его username')
         return
     try:
         if user_identifier:
@@ -30,8 +30,8 @@ async def into_command_info(message: Message, bot: Bot, command: CommandObject) 
                 if user:
                     user_id = user.tg_id
                 else:
-                    await message.reply("Пользователь c таким username не найден в БД, попробуйте применить"
-                                        " команду использую ID пользователя")
+                    await message.answer("Пользователь c таким username не найден в БД, попробуйте применить"
+                                         " команду использую ID пользователя")
                     return
         else:
             user_id = message.reply_to_message.from_user.id

@@ -18,8 +18,8 @@ async def into_command_kick_user(message: Message, command: CommandObject, bot: 
     logging.info('into_command_kick_user')
     await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)  # Удаление сообщения
     if not await is_admin(message, bot):
-        await message.reply("Для использования этой команды бот должен быть администратором в канале,"
-                            " а вы администратором или владельцем")
+        await message.answer("Для использования этой команды бот должен быть администратором в канале,"
+                             " а вы администратором или владельцем")
         return
     user_identifier = 0
     if not command.args:
@@ -33,7 +33,8 @@ async def into_command_kick_user(message: Message, command: CommandObject, bot: 
             return
         reason_: str = " ".join(args[0:]) if len(args) > 1 else ""
         reason: str = " ".join(args[1:]) if len(args) > 1 else ""
-        if not reason and not message.reply_to_message.from_user.id:
+        reply_user_id = message.reply_to_message.from_user.id
+        if not reason and not reply_user_id:
             await message.answer("Укажите причину kick")
             return
         else:

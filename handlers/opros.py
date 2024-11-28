@@ -1,4 +1,5 @@
 import logging
+import pyshorteners #Новый импорт сокращения ссылок
 
 from aiogram import Router, F, Bot
 from database import requests as rq
@@ -120,6 +121,11 @@ async def get_number(message: Message, state: FSMContext, bot: Bot):
     await state.set_state(Registration.nickname)  # Переход к состоянию nickname
 
 
+async def shorten_url(invite_link): #функция сокращающая ссылки
+    invite_link = pyshorteners.Shortener().clckru.short(invite_link)
+    return invite_link
+
+
 # Шаг 4: Получение никнейма и завершение регистрации
 @router.message(F.text, StateFilter(Registration.nickname))
 @error_handler
@@ -134,10 +140,11 @@ async def get_nickname(message: Message, state: FSMContext, bot: Bot):
                 name="Одноразовая ссылка",
                 member_limit=1  # Ограничение: 1 пользователь
             )
+        invite_link = await shorten_url(invite_link)
         await message.answer(text=f'Вы прошли регистрацию, вот ссылка на группу:'
                                   f' <a href="{invite_link.invite_link}">общая группа</a>',
-                             parse_mode="HTML", reply_markup=keyboard_main_button())
-        await rq.update_invitation(tg_id=message.from_user.id, invitation=invite_link)
+                             parse_mode="HTML",
+                             reply_markup=keyboard_main_button())
     else:
         await message.answer("Вы обновили свои данные")
     await state.set_state(state=None)
