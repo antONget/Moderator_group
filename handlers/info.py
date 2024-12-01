@@ -47,6 +47,6 @@ async def into_command_info(message: Message, bot: Bot, command: CommandObject) 
                                           f'Честь: {user.honor}\n'
                                           f'В клане с {user.data_registration}')
             else:
-                await message.reply("Пользователь не найден.")
+                await message.answer("Пользователь не найден.")
     except Exception as e:
-        await message.reply(f"Не удалось получить информацию о пользователе. Ошибка: {e}")
+        await message.answeer(f"Не удалось получить информацию о пользователе. Ошибка: {e}")
