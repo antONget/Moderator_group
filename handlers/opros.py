@@ -54,12 +54,20 @@ async def into_command_opros(message: Message, state: FSMContext, bot: Bot):
 async def process_multiple_callbacks(callback: CallbackQuery, state: FSMContext, bot: Bot):
     logging.info('process_multiple_callbacks')
     if callback.data == "button1":
+        await callback.message.answer(
+            " Сколько вам лет? (принимаются только цифры)")
         await state.set_state(Registration.year)
     elif callback.data == "button2":
+        await callback.message.answer(
+            "Введите ваше имя:")
         await state.set_state(Registration.name)
     elif callback.data == "button3":
+        await callback.message.answer(
+            "Введите ваш ID в PUBG_MOBILE:")
         await state.set_state(Registration.number)
     elif callback.data == "button4":
+        await callback.message.answer(
+            "Введите ваш никнейм в PUBG MOBILE:")
         await state.set_state(Registration.nickname)
 
 
@@ -121,9 +129,9 @@ async def get_number(message: Message, state: FSMContext, bot: Bot):
     await state.set_state(Registration.nickname)  # Переход к состоянию nickname
 
 
-async def shorten_url(invite_link): #функция сокращающая ссылки
-    invite_link = pyshorteners.Shortener().clckru.short(invite_link)
-    return invite_link
+# async def shorten_url(invite_link): #функция сокращающая ссылки
+#     invite_link = pyshorteners.Shortener().clckru.short(invite_link)
+#     return invite_link
 
 
 # Шаг 4: Получение никнейма и завершение регистрации
@@ -140,11 +148,13 @@ async def get_nickname(message: Message, state: FSMContext, bot: Bot):
                 name="Одноразовая ссылка",
                 member_limit=1  # Ограничение: 1 пользователь
             )
-        invite_link = await shorten_url(invite_link)
+        # invite_link = await shorten_url(invite_link)
         await message.answer(text=f'Вы прошли регистрацию, вот ссылка на группу:'
                                   f' <a href="{invite_link.invite_link}">общая группа</a>',
                              parse_mode="HTML",
                              reply_markup=keyboard_main_button())
+        await rq.update_invitation(tg_id=message.from_user.id,
+                                   invitation=str(invite_link.invite_link))
     else:
         await message.answer("Вы обновили свои данные")
     await state.set_state(state=None)
