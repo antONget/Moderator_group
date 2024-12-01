@@ -51,7 +51,7 @@ async def into_command_kick_user(message: Message, command: CommandObject, bot: 
                 if user:
                     user_id = user.tg_id
                 else:
-                    await message.reply("Пользователь c таким username не найден в БД, попробуйте применить"
+                    await message.answer("Пользователь c таким username не найден в БД, попробуйте применить"
                                         " команду использую ID пользователя")
                     return
         else:
@@ -72,6 +72,6 @@ async def into_command_kick_user(message: Message, command: CommandObject, bot: 
                                  f"{user.nickname}</a> по причине: {reason}")
 
         else:
-            await message.reply("Пользователь не найден.")
+            await message.answer("Пользователь не найден.")
     except Exception as e:
-        await message.reply(f"Не удалось кикнуть пользователя. Ошибка: {e}")
+        await message.answer(f"Не удалось кикнуть пользователя. Ошибка: {e}")
