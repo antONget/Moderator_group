@@ -33,7 +33,10 @@ async def into_command_kick_user(message: Message, command: CommandObject, bot: 
             return
         reason_: str = " ".join(args[0:]) if len(args) > 1 else ""
         reason: str = " ".join(args[1:]) if len(args) > 1 else ""
-        reply_user_id = message.reply_to_message.from_user.id
+        if message.reply_to_message:
+            reply_user_id = message.from_user.id
+        else:
+            reply_user_id = message.reply_to_message.from_user.id
         if not reason and not reply_user_id:
             await message.answer("Укажите причину kick")
             return
