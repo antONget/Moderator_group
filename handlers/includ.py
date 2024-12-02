@@ -47,17 +47,17 @@ async def process_add_group_general(message: Message, command: CommandObject, bo
     chat_id = message.chat.id
     if not await is_admin_bot_in_group(message=message, bot=bot) or not \
             await check_super_admin(telegram_id=message.from_user.id):
-        await message.reply("Для использования этой команды бот должен быть администратором в канале,"
+        await message.answer("Для использования этой команды бот должен быть администратором в канале,"
                             " а вы администратором проекта")
         return
     if not group_link:
-        return await message.reply('Для применения команды /get_group_general нужно прислать ссылку')
+        return await message.answer('Для применения команды /get_group_general нужно прислать ссылку')
     group = await rq.get_groups_group_id(group_id=chat_id)
     if not group:
         data = {"group_id": chat_id, "group_clan": "general", "group_link": group_link}
         await rq.add_new_group(data=data)
-        await message.reply(text='Группа добавлена как основная')
+        await message.answer(text='Группа добавлена как основная')
         return
     else:
         await rq.update_group_general(group_id=chat_id, group_link=group_link)
-        await message.reply(text='Основная группа обновлена')
+        await message.answer(text='Основная группа обновлена')

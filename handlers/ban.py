@@ -18,7 +18,7 @@ async def into_command_ban_user(message: Message, command: CommandObject, bot: B
     logging.info('into_command_ban_user')
     await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)  # Удаление сообщения
     if not await is_admin(message, bot):
-        await message.reply("Для использования этой команды бот должен быть администратором в канале,"
+        await message.answer("Для использования этой команды бот должен быть администратором в канале,"
                             " а вы администратором или владельцем")
         return
     user_identifier = 0
@@ -68,7 +68,7 @@ async def into_command_ban_user(message: Message, command: CommandObject, bot: B
                                  f"{user.nickname}</a> по причине: {reason}")
 
         else:
-            await message.reply("Пользователь не найден.")
+            await message.answer("Пользователь не найден.")
     except Exception as e:
         await message.reply(f"Не удалось забанить пользователя. Ошибка: {e}")
 
