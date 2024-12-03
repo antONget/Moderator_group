@@ -7,8 +7,10 @@ from database.models import User
 from utils.error_handling import error_handler
 from aiogram.filters import Command
 from filter.filter_group import is_admin
+from config_data.config import Config, load_config
 
 router = Router()
+config: Config = load_config()
 router.message.filter(F.chat.type != "private")
 
 
@@ -46,7 +48,8 @@ async def into_command_list(message: Message, bot: Bot) -> None:
                     i += 1
                     text += f'{i}. <a href="tg://user?id={user.tg_id}">{user.nickname}</a>\n'
     if text != '':
-        await message.answer(text=text)
+        await bot.send_message(chat_id=config.tg_bot.support_id,
+                               text=text)
     else:
         await message.answer(text='Данные об участниках клана отсутствуют')
     return
