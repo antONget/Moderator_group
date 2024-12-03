@@ -66,6 +66,7 @@ async def all_message(message: Message, bot: Bot) -> None:
     member = await bot.get_chat_member(user_id=message.from_user.id,
                                        chat_id=general_group.group_id)
     logging.info(f'member_status_general_group {member.status}')
+    await rq.update_honor(tg_id=message.from_user.id)
     # await bot.send_message(chat_id=config.tg_bot.support_id,
     #                        text=f'member_status_general_group {message.from_user.id}/{message.from_user.username}-{member.status}')
     if message.chat.id != general_group:
