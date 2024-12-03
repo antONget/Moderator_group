@@ -49,7 +49,7 @@ async def into_command_list(message: Message, bot: Bot) -> None:
             #                        text=text)
         # await message.answer(text=text)
     else:
-        text = f'{message.chat.title}'
+        text = f'{message.chat.title}\n\n'
         i = 0
         for user in users:
             member = await bot.get_chat_member(user_id=user.tg_id,
