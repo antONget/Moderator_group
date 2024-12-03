@@ -41,7 +41,7 @@ async def into_command_list(message: Message, bot: Bot) -> None:
         for user in users:
             member = await bot.get_chat_member(user_id=user.tg_id,
                                                chat_id=message.chat.id)
-            if member.status not in ['left', 'kicked']:
+            if member.status not in ['left', 'kicked', 'restricted']:
                 if user.nickname:
                     i += 1
                     text += f'{i}. <a href="tg://user?id={user.tg_id}">{user.nickname}</a>\n'
@@ -56,7 +56,7 @@ async def into_command_list(message: Message, bot: Bot) -> None:
             member = await bot.get_chat_member(user_id=user.tg_id,
                                                chat_id=message.chat.id)
             member_text += f'{user.tg_id}/{member.status}'
-            if member.status not in ['left', 'kicked']:
+            if member.status not in ['left', 'kicked', 'restricted']:
                 if user.nickname:
                     i += 1
                     text += f'{i}. <a href="tg://user?id={user.tg_id}">{user.nickname}</a>\n'
