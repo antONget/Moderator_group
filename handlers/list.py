@@ -28,8 +28,11 @@ async def into_command_list(message: Message, bot: Bot) -> None:
     groups = await rq.get_groups()
     text = ''
     i = 0
-
+    await bot.send_message(chat_id=config.tg_bot.support_id,
+                           text='list')
     if group.group_clan == 'general':
+        await bot.send_message(chat_id=config.tg_bot.support_id,
+                               text='general')
         for group_ in groups:
             text = f'<b>{group_.group_id}</b>\n\n'
             for user in users:
