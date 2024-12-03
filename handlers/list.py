@@ -18,10 +18,10 @@ router.message.filter(F.chat.type != "private")
 async def into_command_list(message: Message, bot: Bot) -> None:
     logging.info('into_command_list')
     await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)  # Удаление сообщения
-    if not await is_admin(message, bot):
-        await message.reply("Для использования этой команды бот должен быть администратором в канале,"
-                            " а вы администратором или владельцем")
-        return
+    # if not await is_admin(message, bot):
+    #     await message.reply("Для использования этой команды бот должен быть администратором в канале,"
+    #                         " а вы администратором или владельцем")
+    #     return
 
     users = await rq.get_users()
     group = await rq.get_groups_group_id(group_id=message.chat.id)
