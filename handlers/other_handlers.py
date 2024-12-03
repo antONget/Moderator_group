@@ -71,7 +71,7 @@ async def all_message(message: Message, bot: Bot) -> None:
     if message.chat.id != general_group:
         await rq.update_clan_name(tg_id=message.from_user.id, clan_name=message.chat.title)
 
-    if member.status == 'left':
+    if member.status in ['left', 'kicked']:
         await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
         await message.answer(
             'Вас нет в основной группе пройдите опрос в боте через команду /opros и перейдите по ссылке')
