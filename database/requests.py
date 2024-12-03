@@ -15,7 +15,7 @@ async def get_user_tg_id(tg_id: int) -> User:
         return await session.scalar(select(User).where(User.tg_id == tg_id))
 
 
-async def update_username(tg_id: int, username: str) -> User:#обновление username
+async def update_username(tg_id: int, username: str) -> None:
     logging.info('update_username')
     async with async_session() as session:
         user = await session.scalar(select(User).where(User.tg_id == tg_id))
@@ -23,7 +23,16 @@ async def update_username(tg_id: int, username: str) -> User:#обновлени
         await session.commit()
 
 
-async def update_clan_name(tg_id: int, clan_name: str) -> User:#обновление username
+async def update_honor(tg_id: int) -> None:
+    logging.info('update_honor')
+    async with async_session() as session:
+        user = await session.scalar(select(User).where(User.tg_id == tg_id))
+        honor = user.honor
+        user.honor = honor + 1
+        await session.commit()
+
+
+async def update_clan_name(tg_id: int, clan_name: str) -> None:
     logging.info('update_clan_name')
     async with async_session() as session:
         user = await session.scalar(select(User).where(User.tg_id == tg_id))
@@ -31,7 +40,7 @@ async def update_clan_name(tg_id: int, clan_name: str) -> User:#обновлен
         await session.commit()
 
 
-async def update_invitation(tg_id: int, invitation: str) -> User:#обновление username
+async def update_invitation(tg_id: int, invitation: str) -> None:
     logging.info('update_clan_name')
     async with async_session() as session:
         user = await session.scalar(select(User).where(User.tg_id == tg_id))
@@ -114,6 +123,11 @@ async def get_groups() -> list[ClanGroup]:
 
 
 async def get_groups_group_id(group_id: int) -> ClanGroup:
+    """
+    Получаем группу по ее peer_id
+    :param group_id:
+    :return:
+    """
     logging.info('get_groups_group_id')
     async with async_session() as session:
         return await session.scalar(select(ClanGroup).where(ClanGroup.group_id == group_id))
