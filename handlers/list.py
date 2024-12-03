@@ -33,7 +33,7 @@ async def into_command_list(message: Message, bot: Bot) -> None:
     if group.group_clan == 'general':
         # await bot.send_message(chat_id=config.tg_bot.support_id,
         #                        text='general')
-        text = 'УЧАСТНИКИ КЛАНА:'
+        text = 'УЧАСТНИКИ КЛАНА:\n\n'
         # for group_ in groups:
             # text = f'<b>{group_.group_id}</b>\n\n'
             # text = ''
@@ -47,7 +47,7 @@ async def into_command_list(message: Message, bot: Bot) -> None:
                     text += f'{i}. <a href="tg://user?id={user.tg_id}">{user.nickname}</a>\n'
             # await bot.send_message(chat_id=config.tg_bot.support_id,
             #                        text=text)
-        await message.answer(text=text)
+        # await message.answer(text=text)
     else:
         text = f'{message.chat.title}'
         i = 0
