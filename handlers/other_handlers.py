@@ -64,7 +64,7 @@ async def all_message(message: Message, bot: Bot) -> None:
     general_group = await rq.get_groups_general()
     member = await bot.get_chat_member(user_id=message.from_user.id,
                                        chat_id=general_group.group_id)
-
+    logging.info(f'member_status_general_group {member.status}')
     if message.chat.id != general_group:
         await rq.update_clan_name(tg_id=message.from_user.id, clan_name=message.chat.title)
 
