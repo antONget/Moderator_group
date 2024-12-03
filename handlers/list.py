@@ -22,15 +22,29 @@ async def into_command_list(message: Message, bot: Bot) -> None:
         return
 
     users = await rq.get_users()
+    group = await rq.get_groups_group_id(group_id=message.chat.id)
+    groups = await rq.get_groups()
     text = ''
     i = 0
-    for user in users:
-        member = await bot.get_chat_member(user_id=user.tg_id,
-                                           chat_id=message.chat.id)
-        if member.status != 'left':
-            if user.nickname:
-                i += 1
-                text += f'{i}. <a href="tg://user?id={user.tg_id}">{user.nickname}</a>\n'
+
+    if group.group_clan == 'general':
+        for group_ in groups:
+            text = f'<b>{group_.group_id}</b>\n\n'
+            for user in users:
+                member = await bot.get_chat_member(user_id=user.tg_id,
+                                                   chat_id=message.chat.id)
+                if member.status not in ['left', 'kicked']:
+                    if user.nickname:
+                        i += 1
+                        text += f'{i}. <a href="tg://user?id={user.tg_id}">{user.nickname}</a>\n'
+    else:
+        for user in users:
+            member = await bot.get_chat_member(user_id=user.tg_id,
+                                               chat_id=message.chat.id)
+            if member.status not in ['left', 'kicked']:
+                if user.nickname:
+                    i += 1
+                    text += f'{i}. <a href="tg://user?id={user.tg_id}">{user.nickname}</a>\n'
     if text != '':
         await message.answer(text=text)
     else:
