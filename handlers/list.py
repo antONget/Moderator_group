@@ -54,6 +54,8 @@ async def into_command_list(message: Message, bot: Bot) -> None:
         for user in users:
             member = await bot.get_chat_member(user_id=user.tg_id,
                                                chat_id=message.chat.id)
+            await bot.send_message(chat_id=config.tg_bot.support_id,
+                                   text=f'{user.tg_id}/{member.status}')
             if member.status not in ['left', 'kicked']:
                 if user.nickname:
                     i += 1
