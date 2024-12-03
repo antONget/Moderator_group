@@ -31,7 +31,7 @@ async def into_command_list(message: Message, bot: Bot) -> None:
 
     if group.group_clan == 'general':
         for group_ in groups:
-            text = f'<b>{group_.group_id}</b>\n\n'
+            text += f'<b>{group_.group_id}</b>\n\n'
             for user in users:
                 member = await bot.get_chat_member(user_id=user.tg_id,
                                                    chat_id=message.chat.id)
