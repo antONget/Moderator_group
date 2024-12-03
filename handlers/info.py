@@ -38,7 +38,6 @@ async def into_command_info(message: Message, bot: Bot, command: CommandObject) 
         if user_id:
             user: User = await rq.get_user_tg_id(tg_id=user_id)
             if user:
-
                 await message.answer(text=f'Клан: {user.clan_name}\n\n'  # Вывод названия клана (пока None)
                                           f'Ник: {user.nickname}\n'
                                           f'ID: <code>{user.id_PUBG_MOBILE}</code>\n'
