@@ -34,7 +34,8 @@ async def into_command_list(message: Message, bot: Bot) -> None:
         # await bot.send_message(chat_id=config.tg_bot.support_id,
         #                        text='general')
         for group_ in groups:
-            text = f'<b>{group_.group_id}</b>\n\n'
+            # text = f'<b>{group_.group_id}</b>\n\n'
+            text = ''
             i = 0
             for user in users:
                 member = await bot.get_chat_member(user_id=user.tg_id,
