@@ -26,7 +26,7 @@ class User(Base):
     id_PUBG_MOBILE: Mapped[int] = mapped_column(Integer(), default=0)
     role: Mapped[str] = mapped_column(String(), default='user')
     clan_name: Mapped[str] = mapped_column(String(), default='None')
-    invitation: Mapped[str] = mapped_column(String(), default='None')
+    warn: Mapped[str] = mapped_column(String(), default='None')
 
 class ClanGroup(Base):
     __tablename__ = "clan_groups"
@@ -35,6 +35,24 @@ class ClanGroup(Base):
     group_clan: Mapped[str] = mapped_column(String())
     group_link: Mapped[str] = mapped_column(String())
 
+"""class Warn(Base):
+    __tablename__ = "warn"
+
+    tg_id: Mapped[int] = mapped_column(primary_key=True)
+    warn_1: Mapped[str] = mapped_column(String())
+    warn_cause_1: Mapped[str] = mapped_column(String())
+    warn_2: Mapped[str] = mapped_column(String())
+    warn_cause_2: Mapped[str] = mapped_column(String())
+    warn_3: Mapped[str] = mapped_column(String())
+    warn_cause_3: Mapped[str] = mapped_column(String())
+    warn_4: Mapped[str] = mapped_column(String())
+    warn_cause_4: Mapped[str] = mapped_column(String())
+    warn_5: Mapped[str] = mapped_column(String())
+    warn_cause_5: Mapped[str] = mapped_column(String())
+    mute: Mapped[str] = mapped_column(String())
+    mute_cause: Mapped[str] = mapped_column(String())
+    ban: Mapped[str] = mapped_column(String())
+    ban_cause: Mapped[str] = mapped_column(String())"""
 
 async def async_main():
     async with engine.begin() as conn:

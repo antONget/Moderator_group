@@ -1,9 +1,13 @@
 import logging
 
+
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.sql.functions import current_time
+
 from database.models import async_session
 from database.models import User, ClanGroup
 from sqlalchemy import select
+from datetime import  datetime, timedelta
 
 
 """USER"""
@@ -41,11 +45,20 @@ async def update_clan_name(tg_id: int, clan_name: str) -> None:
 
 
 async def update_invitation(tg_id: int, invitation: str) -> None:
-    logging.info('update_clan_name')
+    logging.info('update_invitation')
     async with async_session() as session:
         user = await session.scalar(select(User).where(User.tg_id == tg_id))
         user.invitation = invitation
         await session.commit()
+
+
+async def update_warn(tg_id: int, warn: str) -> None:
+    logging.info('update_clan_name')
+    async with async_session() as session:
+        user = await session.scalar(select(User).where(User.tg_id == tg_id))
+        user.warn = warn
+        await session.commit()
+
 
 
 async def get_user_username(username: str) -> User:

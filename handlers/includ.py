@@ -23,11 +23,11 @@ async def process_add_group(message: Message, command: CommandObject, bot: Bot):
     group_link = command.args
     chat_id = message.chat.id
     if not await is_admin_bot_in_group(message=message, bot=bot) or not await check_super_admin(telegram_id=message.from_user.id):
-        await message.reply("Для использования этой команды бот должен быть администратором в канале,"
+        await message.answer("Для использования этой команды бот должен быть администратором в канале,"
                             " а вы администратором проекта")
         return
     if not group_link:
-        return await message.reply('Для применения команды /get_group нужно прислать ссылку')
+        return await message.answer('Для применения команды /get_group нужно прислать ссылку')
     groups = await rq.get_groups_group_id(group_id=chat_id)
     if not groups:
         data = {"group_id": chat_id, "group_clan": "clan", "group_link": group_link}
