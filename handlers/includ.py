@@ -24,7 +24,7 @@ async def process_add_group(message: Message, command: CommandObject, bot: Bot):
     chat_id = message.chat.id
     if not await is_admin_bot_in_group(message=message, bot=bot) or not await check_super_admin(telegram_id=message.from_user.id):
         await message.answer("Для использования этой команды бот должен быть администратором в канале,"
-                            " а вы администратором проекта")
+                             " а вы администратором проекта")
         return
     if not group_link:
         return await message.answer('Для применения команды /get_group нужно прислать ссылку')
@@ -48,7 +48,7 @@ async def process_add_group_general(message: Message, command: CommandObject, bo
     if not await is_admin_bot_in_group(message=message, bot=bot) or not \
             await check_super_admin(telegram_id=message.from_user.id):
         await message.answer("Для использования этой команды бот должен быть администратором в канале,"
-                            " а вы администратором проекта")
+                             " а вы администратором проекта")
         return
     if not group_link:
         return await message.answer('Для применения команды /get_group_general нужно прислать ссылку')

@@ -12,13 +12,18 @@ router.message.filter(F.chat.type != "private")
 
 @router.message(Command("mute"))
 async def func_mute(message: Message, command: CommandObject, bot: Bot):
+    """
+    /mute @username [срок в часах, цифрой] [причина]
+    /mute [срок в часах, цифрой] [причина]  - если ответным сообщением
+    :param message:
+    :param command:
+    :param bot:
+    :return:
+    """
     await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
-    reply_message = message.reply_to_message
-    mention = reply_message.from_user.mention_html(reply_message.from_user.first_name)
-
     if not await is_admin(message, bot):
-        await message.reply("Для использования этой команды бот должен быть администратором в канале,"
-                            " а вы администратором или владельцем")
+        await message.answer("Для использования этой команды бот должен быть администратором в канале,"
+                             " а вы администратором или владельцем")
         return
     args = command.args.split(" ")
     user_identifier = [args[0]] if args else []
@@ -43,7 +48,7 @@ async def func_mute(message: Message, command: CommandObject, bot: Bot):
             mention = message.reply_to_message.from_user.mention_html(message.reply_to_message.from_user.first_name)
 
         if user_id:
-            chats =await rq.get_rows_with_role_clan()
+            chats = await rq.get_rows_with_role_clan()
             if chats:
                 for chat_id in chats:
                     if not user_id:
@@ -60,6 +65,6 @@ async def func_mute(message: Message, command: CommandObject, bot: Bot):
                     await message.answer(f" Пользователь <b>{mention}</b> был заглушен!")
                 
         else:
-            await message.reply("Пользователь не найден.")
+            await message.answer("Пользователь не найден.")
     except Exception as e:
-        await message.reply(f"Не удалось забанить пользователя. Ошибка: {e}")
+        await message.answer(f"Не удалось забанить пользователя. Ошибка: {e}")

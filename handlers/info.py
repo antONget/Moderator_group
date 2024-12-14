@@ -49,4 +49,4 @@ async def into_command_info(message: Message, bot: Bot, command: CommandObject) 
             else:
                 await message.reply("Пользователь не найден.")
     except Exception as e:
-        await message.reply(f"Не удалось получить информацию о пользователе. Ошибка: {e}")
+        await message.answer(f"Не удалось получить информацию о пользователе. Ошибка: {e}")

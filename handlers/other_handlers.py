@@ -75,7 +75,8 @@ async def all_message(message: Message, bot: Bot) -> None:
     if member.status in ['left', 'kicked']:
         await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
         await message.answer(
-            'Вас нет в основной группе пройдите опрос в боте через команду /opros и перейдите по ссылке')
+            'К сожалению, вы не состоите в общем чате клана и отправка сообщений вам не доступна.\n\n'
+            'Пройдите опрос в боте @clan_by_bot для добавления в общий чат клана.')
         return
 
     user = await rq.get_user_tg_id(tg_id=message.from_user.id)

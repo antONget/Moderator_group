@@ -14,7 +14,8 @@ async def repeater(interval, function):
     Timer(interval, repeater[interval, function]).start()
     function()
 
-async def verification_sum_warn(tg_id:int):
+
+async def verification_sum_warn(tg_id: int):
     user = await rq.get_user_tg_id(tg_id = tg_id)
     elements = []
     warn =  user.warn
@@ -25,8 +26,7 @@ async def verification_sum_warn(tg_id:int):
     return len(elements)
 
 
-
-async  def pruf_sum_warn(tg_id:int):
+async  def pruf_sum_warn(tg_id: int):
     sum_warn = await verification_sum_warn(tg_id=tg_id)
     if sum_warn == 5:
         return 0
