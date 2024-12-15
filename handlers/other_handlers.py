@@ -75,8 +75,12 @@ async def all_message(message: Message, bot: Bot, ) -> None:
         await rq.update_honor(tg_id=message.from_user.id)
 
     if message.chat.id != general_group.group_id:
+        if message.from_user.username:
+            username = message.from_user.username
+        else:
+            username = 'username'
         await rq.update_clan_name(tg_id=message.from_user.id,
-                                  username=message.from_user.username,
+                                  username=username,
                                   clan_name=message.chat.title)
 
     if member.status in ['left', 'kicked']:

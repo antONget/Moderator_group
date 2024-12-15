@@ -28,7 +28,8 @@ async def update_username(tg_id: int, username: str) -> None:
     logging.info('update_username')
     async with async_session() as session:
         user = await session.scalar(select(User).where(User.tg_id == tg_id))
-        user.username = username
+        if username:
+            user.username = username
         await session.commit()
 
 

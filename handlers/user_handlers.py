@@ -23,6 +23,12 @@ class Registration(StatesGroup):
 @router.message(F.text == '/get_dbfile')
 @error_handler
 async def process_press_start(message: Message, bot: Bot) -> None:
+    """
+    Обработка команды /start и 'Главное меню'
+    :param message:
+    :param bot:
+    :return:
+    """
     logging.info('process_press_start ')
     if message.text == '/get_dbfile':
         file_path = "database/db.sqlite3"
@@ -31,11 +37,13 @@ async def process_press_start(message: Message, bot: Bot) -> None:
     tg_id: int = message.from_user.id
     username: str = message.from_user.username
     user = await rq.get_user_tg_id(tg_id=tg_id)
+    # добавление или обновление пользователя в БД
     if not user:
         if not username:
             username = 'Username'
         data = {"tg_id": message.chat.id, "username": username}
         await rq.add_new_user(data=data)
+    # обновление username
     elif username != user.username:
         await rq.update_username(tg_id=message.from_user.id,
                                  username=message.from_user.username)
@@ -56,20 +64,25 @@ async def process_press_start(message: Message, bot: Bot) -> None:
     #         fields_text = ", ".join(missing_fields)
     #         await message.answer(f"У вас не указаны следующие данные: {fields_text} \n"
     #                              f"Заполните их применив команду /opros")
+    # получаем список групп
     groups = await rq.get_groups()
+    # флаг того что пользователь состоит в группе
     auth = False
     for group in groups:
         member = await bot.get_chat_member(user_id=message.from_user.id,
                                            chat_id=group.group_id)
         if member.status != 'left':
             auth = True
+    # получаем данные о пользователе
     user = await rq.get_user_tg_id(tg_id=tg_id)
+    # выводим клавиатуру для авторизованных и нет пользователей
     if user.name:
         await message.answer(f"Здравствуйте, {user.name}",
                              reply_markup=main_keyboard(auth=auth))
     else:
         await message.answer(f"Здравствуйте!",
                              reply_markup=main_keyboard(auth=auth))
+    # если пользователь не состоит в группе то предлагаем пройти опрос
     if auth:
         await message.answer(
             "Здравствуйте. Пройдите опрос через команду /opros, чтобы получить ссылку на основной чат.")
