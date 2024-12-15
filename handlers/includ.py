@@ -27,7 +27,7 @@ async def process_add_group(message: Message, command: CommandObject, bot: Bot):
                              " а вы администратором проекта")
         return
     if not group_link:
-        return await message.answer('Для применения команды /get_group нужно прислать ссылку')
+        return await message.answer('Для применения команды /set_group нужно прислать ссылку')
     groups = await rq.get_groups_group_id(group_id=chat_id)
     if not groups:
         data = {"group_id": chat_id, "group_clan": "clan", "group_link": group_link}
@@ -51,7 +51,7 @@ async def process_add_group_general(message: Message, command: CommandObject, bo
                              " а вы администратором проекта")
         return
     if not group_link:
-        return await message.answer('Для применения команды /get_group_general нужно прислать ссылку')
+        return await message.answer('Для применения команды /set_group_general нужно прислать ссылку')
     group = await rq.get_groups_group_id(group_id=chat_id)
     if not group:
         data = {"group_id": chat_id, "group_clan": "general", "group_link": group_link}

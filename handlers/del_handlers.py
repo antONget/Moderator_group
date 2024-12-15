@@ -20,8 +20,9 @@ async def __message_delete_(message: Message, bot: Bot):
                             " а вы администратором или владельцем")
         return
 
-    replied_message_id = message.reply_to_message.message_id
-    if replied_message_id:
+    replied_message = message.reply_to_message
+    if replied_message:
+        replied_message_id = message.reply_to_message.message_id
         await bot.delete_message(chat_id=message.chat.id, message_id=replied_message_id)
     else:
         await message.answer("Вы не ответили ни на какое сообщение.")

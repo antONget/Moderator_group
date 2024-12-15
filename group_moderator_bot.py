@@ -6,7 +6,7 @@ from aiogram.types import FSInputFile, User
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.types import ErrorEvent
-
+# from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import traceback
 from typing import Any, Dict
 from config_data.config import Config, load_config
@@ -18,15 +18,13 @@ from database.models import async_main
 logger = logging.getLogger(__name__)
 
 
-
-# Функция конфигурирования и запуска бота
 async def main():
     await async_main()
     # Конфигурируем логирование
     logging.basicConfig(
         level=logging.INFO,
-        # filename="py_log.log",
-        # filemode='w',
+        filename="py_log.log",
+        filemode='w',
         format='%(filename)s:%(lineno)d #%(levelname)-8s '
                '[%(asctime)s] - %(name)s - %(message)s')
 
@@ -39,10 +37,13 @@ async def main():
     # Инициализируем бот и диспетчер
     bot = Bot(token=config.tg_bot.token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     dp = Dispatcher()
+    # scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
+    # scheduler.add_job(info_violations, 'cron', hour="*", args=(bot,))
+    # scheduler.start()
     # Регистрируем router в диспетчере
     dp.include_router(user_handlers.router)
     dp.include_routers(info.router, kick.router, ban.router, unban.router, mute.router, unmute.router,  includ.router,
-                       opros.router, set_lider.router, list.router, del_handlers.router, warn.router) #Добавлен list.router
+                       opros.router, set_lider.router, list.router, del_handlers.router, warn.router)
     dp.include_router(other_handlers.router)
 
     dp.callback_query.middleware(ThrottlingMiddleware())

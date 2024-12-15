@@ -8,6 +8,12 @@ import re
 
 
 async def is_admin(message: Message, bot: Bot):
+    """
+    Проверка, что пользователь отправивший сообщение является АДМИНИСТРАТОРОМ или ВЛАДЕЛЬЦЕМ
+    :param message:
+    :param bot:
+    :return:
+    """
     member = await bot.get_chat_member(message.chat.id, message.from_user.id)
     bot = await bot.get_chat_member(message.chat.id, bot.id)
     if member.status not in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR] or\

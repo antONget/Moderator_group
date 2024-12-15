@@ -16,9 +16,9 @@ async def repeater(interval, function):
 
 
 async def verification_sum_warn(tg_id: int):
-    user = await rq.get_user_tg_id(tg_id = tg_id)
+    user = await rq.get_user_tg_id(tg_id=tg_id)
     elements = []
-    warn =  user.warn
+    warn = user.warn
     elements = warn.split()
     for i, element in enumerate(elements):
         if element == "warn" and i + 1 < len(elements):  # Сравниваем с 'warn' и проверяем следующий элемент
@@ -26,13 +26,13 @@ async def verification_sum_warn(tg_id: int):
     return len(elements)
 
 
-async  def pruf_sum_warn(tg_id: int):
+
+async  def pruf_sum_warn(tg_id:int):
     sum_warn = await verification_sum_warn(tg_id=tg_id)
     if sum_warn == 5:
         return 0
     else :
         return 1
-
 
 async  def parse_warn_time():
     users = await rq.get_users()

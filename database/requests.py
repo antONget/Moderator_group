@@ -1,13 +1,18 @@
 import logging
 
-
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.sql.functions import current_time
-
 from database.models import async_session
-from database.models import User, ClanGroup
+from database.models import User, ClanGroup, Chat_reaction, ChatAction
 from sqlalchemy import select
-from datetime import  datetime, timedelta
+from dataclasses import dataclass
+from datetime import datetime, timedelta
+
+
+@dataclass
+class UserRole:
+    user = "user"
+    lider = "lider"
+    admin = "admin"
+    clan = "clan"
 
 
 """USER"""
@@ -36,11 +41,22 @@ async def update_honor(tg_id: int) -> None:
         await session.commit()
 
 
-async def update_clan_name(tg_id: int, clan_name: str) -> None:
+async def update_clan_name(tg_id: int, clan_name: str, username: str = 'username') -> None:
+    """
+    Обновляем имя клана у пользователя
+    :param tg_id:
+    :param clan_name:
+    :param username:
+    :return:
+    """
     logging.info('update_clan_name')
     async with async_session() as session:
         user = await session.scalar(select(User).where(User.tg_id == tg_id))
-        user.clan_name = clan_name
+        if user:
+            user.clan_name = clan_name
+        else:
+            data_user = {'tg_id': tg_id, 'clan_name': clan_name, 'username': username}
+            session.add(User(**data_user))
         await session.commit()
 
 
@@ -48,20 +64,94 @@ async def update_invitation(tg_id: int, invitation: str) -> None:
     logging.info('update_invitation')
     async with async_session() as session:
         user = await session.scalar(select(User).where(User.tg_id == tg_id))
-        user.invitation = invitation
+        if user:
+            user.invitation = invitation
         await session.commit()
 
 
 async def update_warn(tg_id: int, warn: str) -> None:
     logging.info('update_clan_name')
     async with async_session() as session:
-        user = await session.scalar(select(User).where(User.tg_id == tg_id))
-        user.warn = warn
+        user = await session.scalar(select(Chat_reaction).where(Chat_reaction.tg_id == tg_id))
+        if not user:
+            data = {"tg_id": tg_id, "warn": warn, "sum": 1}
+            session.add(Chat_reaction(**data))
+        else:
+            user.warn += warn
+            user.sum +=1
         await session.commit()
+        return
 
+
+async def update_ban(tg_id: int, ban: str) -> None:
+    logging.info('update_clan_name')
+    async with async_session() as session:
+        user = await session.scalar(select(Chat_reaction).where(Chat_reaction.tg_id == tg_id))
+        if not user:
+            data = {"tg_id":tg_id, "ban":ban, "sum":1}
+            session.add(Chat_reaction(**data))
+        else:
+            user.ban += ban
+            user.sum +=1
+        await session.commit()
+        return
+
+async def update_mute(tg_id: int) -> None:
+    logging.info('update_clan_name')
+    async with async_session() as session:
+        user = await session.scalar(select(Chat_reaction).where(Chat_reaction.tg_id == tg_id))
+        if not user:
+            data = {"tg_id":tg_id, "mute":f"mute\n", "sum":1}
+            session.add(Chat_reaction(**data))
+        else:
+            user.mute += f"mute\n"
+            user.sum +=1
+        await session.commit()
+        return
+
+async def update_kick(tg_id: int, kick: str) -> None:
+    logging.info('update_clan_name')
+    async with async_session() as session:
+        user = await session.scalar(select(Chat_reaction).where(Chat_reaction.tg_id == tg_id))
+        if not user:
+            data = {"tg_id":tg_id, "kick":kick, "sum":1, "active_warn":1}
+            session.add(Chat_reaction(**data))
+        else:
+            user.kick += kick
+            user.sum +=1
+            user.active_warn +=1
+        await session.commit()
+        return
+
+async  def after_verification_warn(tg_id:int, active_warn:int):
+    logging.info('after_verification_warn')
+    async with async_session() as session:
+        user = await session.scalar(select(Chat_reaction).where(Chat_reaction.tg_id == tg_id))
+        user.active_warn = active_warn
+        await session.commit()
+        return
+
+
+async  def get_warn_sum(tg_id:int):
+    logging.info('get_warn_sum')
+    async with async_session() as session:
+        return await session.scalar(select(Chat_reaction).where(Chat_reaction.tg_id == tg_id))
+
+
+async  def get_warn_user() -> list[Chat_reaction]:
+    logging.info('get_users')
+    async with async_session() as session:
+        users = await session.scalars(select(Chat_reaction))
+        users_list = [user for user in users]
+        return users_list
 
 
 async def get_user_username(username: str) -> User:
+    """
+    Получение информации о пользователе по его username
+    :param username:
+    :return:
+    """
     logging.info('get_user_username')
     async with async_session() as session:
         return await session.scalar(select(User).where(User.username == username))
@@ -262,3 +352,48 @@ async def update_group_general(group_id: int, group_link: str) -> None:
 #         users = await session.scalars(select(User))
 #         list_users = [user for user in users ]
 #         return list_users
+
+
+""" CHAT_ACTION """
+
+
+async def add_chat_action(data: dict) -> None:
+    """
+    Добавление действия из чата
+    :param data:
+    :return:
+    """
+    logging.info(f'add_chat_action')
+    async with async_session() as session:
+        session.add(ChatAction(**data))
+        await session.commit()
+
+
+async def get_chat_action_tg_id(tg_id: int, type_action: str, count_day: int = 7) -> list[ChatAction]:
+    """
+    Получаем список выбранных действий в отношении пользователя за последние дни
+    :param tg_id:
+    :param type_action:
+    :param count_day:
+    :return:
+    """
+    logging.info(f'add_chat_action')
+    async with async_session() as session:
+        actions = await session.scalars(select(ChatAction).filter(ChatAction.tg_id == tg_id,
+                                                                  ChatAction.type_action == type_action))
+        list_actions = []
+        if actions:
+            date_format = '%d-%m-%Y %H:%M'
+            current_date = datetime.now().strftime('%d-%m-%Y %H:%M')
+            for action in actions:
+                delta_time = (datetime.strptime(current_date, date_format) - datetime.strptime(action.data_action,
+                                                                                               date_format))
+                if count_day > 0:
+                    if delta_time.days < count_day:
+                        list_actions.append(action)
+                else:
+                    list_actions.append(action)
+            return list_actions
+
+        else:
+            return list_actions

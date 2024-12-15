@@ -1,4 +1,4 @@
-from sqlalchemy import String, Integer
+from sqlalchemy import String, Integer, BigInteger
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
 
@@ -25,34 +25,40 @@ class User(Base):
     data_registration: Mapped[str] = mapped_column(String(), default='date')
     id_PUBG_MOBILE: Mapped[int] = mapped_column(Integer(), default=0)
     role: Mapped[str] = mapped_column(String(), default='user')
-    clan_name: Mapped[str] = mapped_column(String(), default='None')
-    warn: Mapped[str] = mapped_column(String(), default='None')
+    clan_name: Mapped[str] = mapped_column(String(), default='')
+
 
 class ClanGroup(Base):
     __tablename__ = "clan_groups"
 
     group_id: Mapped[int] = mapped_column(primary_key=True)
-    group_clan: Mapped[str] = mapped_column(String())
-    group_link: Mapped[str] = mapped_column(String())
+    group_clan: Mapped[str] = mapped_column(String(), default='')
+    group_link: Mapped[str] = mapped_column(String(), default='')
 
-"""class Warn(Base):
-    __tablename__ = "warn"
+#добавить новую колонку в которую вводится данные об сообщении
+
+
+class Chat_reaction(Base):
+    __tablename__ = "chat_reaction"
 
     tg_id: Mapped[int] = mapped_column(primary_key=True)
-    warn_1: Mapped[str] = mapped_column(String())
-    warn_cause_1: Mapped[str] = mapped_column(String())
-    warn_2: Mapped[str] = mapped_column(String())
-    warn_cause_2: Mapped[str] = mapped_column(String())
-    warn_3: Mapped[str] = mapped_column(String())
-    warn_cause_3: Mapped[str] = mapped_column(String())
-    warn_4: Mapped[str] = mapped_column(String())
-    warn_cause_4: Mapped[str] = mapped_column(String())
-    warn_5: Mapped[str] = mapped_column(String())
-    warn_cause_5: Mapped[str] = mapped_column(String())
-    mute: Mapped[str] = mapped_column(String())
-    mute_cause: Mapped[str] = mapped_column(String())
-    ban: Mapped[str] = mapped_column(String())
-    ban_cause: Mapped[str] = mapped_column(String())"""
+    warn: Mapped[str] = mapped_column(String(), default='')
+    mute: Mapped[str] = mapped_column(String(), default='')
+    ban: Mapped[str] = mapped_column(String(), default='')
+    kick: Mapped[str] = mapped_column(String(), default='')
+    sum: Mapped[int] = mapped_column(Integer(), default=0)
+    active_warn: Mapped[int] = mapped_column(Integer(), default=0)
+
+
+class ChatAction(Base):
+    __tablename__ = "chat_action"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    tg_id: Mapped[int] = mapped_column(BigInteger())
+    type_action: Mapped[str] = mapped_column(String(), default='')
+    data_action: Mapped[str] = mapped_column(String(), default='')
+    reason_action: Mapped[str] = mapped_column(String(), default='')
+
 
 async def async_main():
     async with engine.begin() as conn:
