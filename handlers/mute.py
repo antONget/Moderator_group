@@ -15,7 +15,6 @@ router.message.filter(F.chat.type != "private")
 
 
 @router.message(Command("mute"))
-@error_handler
 async def process_command_mute(message: Message, command: CommandObject, bot: Bot):
     """
     Обработка команды /mute
@@ -26,7 +25,7 @@ async def process_command_mute(message: Message, command: CommandObject, bot: Bo
     :param bot:
     :return:
     """
-    logging.info('process_command_mute')
+    logging.info(f'process_command_mute {message.chat.type}')
     # удаляем сообщение с командой
     await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
     # проверка что команду использует администратор или владелец чата
@@ -141,7 +140,7 @@ async def mute_info_process(user_to_action: int, reason: str, message: Message, 
     :param bot:
     :return:
     """
-    logging.info('warn_info_process')
+    logging.info('mute_info_process')
     date_chat_action = datetime.datetime.today()
     date_chat_action = date_chat_action.strftime('%d-%m-%Y %H:%M')
     type_chat_action = 'mute'
@@ -152,16 +151,8 @@ async def mute_info_process(user_to_action: int, reason: str, message: Message, 
                         'reason_action': reason_chat_action}
     await rq.add_chat_action(data=data_chat_action)
     user: User = await rq.get_user_tg_id(tg_id=user_to_action)
-    only_read_permissions = ChatPermissions(can_send_messages=False,
-                                            can_send_media_messages=False,
-                                            can_send_polls=False,
-                                            can_send_other_messages=False,
-                                            can_add_web_page_previews=False,
-                                            can_change_info=False,
-                                            can_invite_users=False,
-                                            can_pin_messages=False)
     member = await bot.get_chat_member(message.chat.id, message.from_user.id)
-    if member in [ChatMemberStatus.CREATOR]:
+    if member not in [ChatMemberStatus.CREATOR, ChatMemberStatus.ADMINISTRATOR]:
         until_date = datetime.datetime.now() + datetime.timedelta(minutes=hour_mute)
         await bot.restrict_chat_member(chat_id=message.chat.id,
                                        user_id=user_to_action,

@@ -30,7 +30,7 @@ async def process_add_group(message: Message, command: CommandObject, bot: Bot):
         return await message.answer('Для применения команды /set_group нужно прислать ссылку')
     groups = await rq.get_groups_group_id(group_id=chat_id)
     if not groups:
-        data = {"group_id": chat_id, "group_clan": "clan", "group_link": group_link}
+        data = {"group_id": chat_id, "group_clan": "clan", "group_link": group_link, "group_title": message.chat.title}
         await rq.add_new_group(data=data)
         await message.answer(text='Группа добавлена в проект')
         return
@@ -54,7 +54,7 @@ async def process_add_group_general(message: Message, command: CommandObject, bo
         return await message.answer('Для применения команды /set_group_general нужно прислать ссылку')
     group = await rq.get_groups_group_id(group_id=chat_id)
     if not group:
-        data = {"group_id": chat_id, "group_clan": "general", "group_link": group_link}
+        data = {"group_id": chat_id, "group_clan": "general", "group_link": group_link, "group_title": message.chat.title}
         await rq.add_new_group(data=data)
         await message.answer(text='Группа добавлена как основная')
         return

@@ -7,7 +7,7 @@ from filter.filter_group import is_admin
 from aiogram.filters import Command, CommandObject
 from utils.error_handling import error_handler
 from database import requests as rq
-from database.models import User
+from database.models import User, ClanGroup
 import datetime
 router = Router()
 router.message.filter(F.chat.type != "private")
@@ -110,9 +110,14 @@ async def kick_info_process(user_to_action: int, reason: str, message: Message, 
                         'reason_action': reason_chat_action}
     await rq.add_chat_action(data=data_chat_action)
     user: User = await rq.get_user_tg_id(tg_id=user_to_action)
-    await bot.ban_chat_member(chat_id=message.chat.id, user_id=user_to_action)
-    await asyncio.sleep(5)
-    await bot.unban_chat_member(chat_id=message.chat.id, user_id=user_to_action)
+    groups: list[ClanGroup] = await rq.get_groups()
+    for group in groups:
+        try:
+            await bot.ban_chat_member(chat_id=group.group_id, user_id=user_to_action)
+            await asyncio.sleep(5)
+            await bot.unban_chat_member(chat_id=group.group_id, user_id=user_to_action)
+        except:
+            pass
     await message.answer(f"Администратор <a href='tg://user?id={message.from_user.id}'>"
                          f"{message.from_user.full_name}</a> кикнул пользователя"
                          f" <a href='tg://user?id={user_to_action}'>"

@@ -34,6 +34,7 @@ class ClanGroup(Base):
     group_id: Mapped[int] = mapped_column(primary_key=True)
     group_clan: Mapped[str] = mapped_column(String(), default='')
     group_link: Mapped[str] = mapped_column(String(), default='')
+    group_title: Mapped[str] = mapped_column(String(), default='')
 
 #добавить новую колонку в которую вводится данные об сообщении
 
@@ -58,6 +59,27 @@ class ChatAction(Base):
     type_action: Mapped[str] = mapped_column(String(), default='')
     data_action: Mapped[str] = mapped_column(String(), default='')
     reason_action: Mapped[str] = mapped_column(String(), default='')
+
+
+class Recruting(Base):
+    __tablename__ = "recruting"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    is_recruting: Mapped[int] = mapped_column(String())
+
+
+class RecrutingOpros(Base):
+    __tablename__ = "recruting_opros"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    tg_id: Mapped[int] = mapped_column(BigInteger())
+    age_opros: Mapped[int] = mapped_column(Integer())
+    ID_PUBG_MOBILE: Mapped[int] = mapped_column(Integer())
+    kd_Metro_Royale: Mapped[str] = mapped_column(String())
+    img_PUBG_MOBILE: Mapped[str] = mapped_column(String())
+    img_PUBG_Metro_Royale: Mapped[str] = mapped_column(String())
+    about_me: Mapped[str] = mapped_column(String())
+    data_opros: Mapped[str] = mapped_column(String())
 
 
 async def async_main():

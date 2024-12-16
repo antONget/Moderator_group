@@ -11,7 +11,7 @@ import traceback
 from typing import Any, Dict
 from config_data.config import Config, load_config
 from handlers import other_handlers, user_handlers, info, kick, ban, unban, mute, unmute, includ, opros, set_lider,\
-    list, del_handlers, warn
+    list, del_handlers, warn, admin_handlers
 from middleware.throttling import ThrottlingMiddleware
 from database.models import async_main
 # Инициализируем logger
@@ -42,6 +42,7 @@ async def main():
     # scheduler.start()
     # Регистрируем router в диспетчере
     dp.include_router(user_handlers.router)
+    dp.include_router(admin_handlers.router)
     dp.include_routers(info.router, kick.router, ban.router, unban.router, mute.router, unmute.router,  includ.router,
                        opros.router, set_lider.router, list.router, del_handlers.router, warn.router)
     dp.include_router(other_handlers.router)
@@ -53,8 +54,8 @@ async def main():
     async def error_handler(event: ErrorEvent, data: Dict[str, Any]):
         logger.critical("Критическая ошибка: %s", event.exception, exc_info=True)
         user: User = data.get('event_from_user')
-        await bot.send_message(chat_id=user.id,
-                               text='Упс.. Что-то пошло не так( Перезапустите бота /start')
+        # await bot.send_message(chat_id=user.id,
+        #                        text='Упс.. Что-то пошло не так( Перезапустите бота /start')
         await bot.send_message(chat_id=config.tg_bot.support_id,
                                text=f'{event.exception}')
         formatted_lines = traceback.format_exc()

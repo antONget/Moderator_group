@@ -1,7 +1,7 @@
 import logging
 
 from database.models import async_session
-from database.models import User, ClanGroup, Chat_reaction, ChatAction
+from database.models import User, ClanGroup, Chat_reaction, ChatAction, Recruting, RecrutingOpros
 from sqlalchemy import select
 from dataclasses import dataclass
 from datetime import datetime, timedelta
@@ -30,6 +30,16 @@ async def update_username(tg_id: int, username: str) -> None:
         user = await session.scalar(select(User).where(User.tg_id == tg_id))
         if username:
             user.username = username
+        await session.commit()
+
+
+async def update_data_registration(tg_id: int) -> None:
+    logging.info('update_username')
+    async with async_session() as session:
+        user = await session.scalar(select(User).where(User.tg_id == tg_id))
+        if user:
+            date_format = '%d-%m-%Y %H:%M'
+            user.data_registration = datetime.now().strftime(date_format)
         await session.commit()
 
 
@@ -79,7 +89,7 @@ async def update_warn(tg_id: int, warn: str) -> None:
             session.add(Chat_reaction(**data))
         else:
             user.warn += warn
-            user.sum +=1
+            user.sum += 1
         await session.commit()
         return
 
@@ -93,9 +103,10 @@ async def update_ban(tg_id: int, ban: str) -> None:
             session.add(Chat_reaction(**data))
         else:
             user.ban += ban
-            user.sum +=1
+            user.sum += 1
         await session.commit()
         return
+
 
 async def update_mute(tg_id: int) -> None:
     logging.info('update_clan_name')
@@ -106,9 +117,10 @@ async def update_mute(tg_id: int) -> None:
             session.add(Chat_reaction(**data))
         else:
             user.mute += f"mute\n"
-            user.sum +=1
+            user.sum += 1
         await session.commit()
         return
+
 
 async def update_kick(tg_id: int, kick: str) -> None:
     logging.info('update_clan_name')
@@ -123,6 +135,7 @@ async def update_kick(tg_id: int, kick: str) -> None:
             user.active_warn +=1
         await session.commit()
         return
+
 
 async  def after_verification_warn(tg_id:int, active_warn:int):
     logging.info('after_verification_warn')
@@ -398,3 +411,85 @@ async def get_chat_action_tg_id(tg_id: int, type_action: str, count_day: int = 7
 
         else:
             return list_actions
+
+
+""" RECRUTING """
+
+
+async def add_recruting(data: dict) -> None:
+    """
+    Добавление строки рекрутинга
+    :param data:
+    :return:
+    """
+    logging.info(f'add_chat_action')
+    async with async_session() as session:
+        recruting = await session.scalar(select(Recruting).where(Recruting.id == 1))
+        if recruting:
+            recruting.is_recruting = data['is_recruting']
+        else:
+            session.add(Recruting(**data))
+        await session.commit()
+
+
+async def get_recruting() -> Recruting:
+    """
+    Получение строки рекрутинга
+    :return:
+    """
+    logging.info(f'get_recruting')
+    async with async_session() as session:
+        return await session.scalar(select(Recruting).where(Recruting.id == 1))
+
+
+""" RECRUTING_OPROS """
+
+
+async def add_recruting_opros(data: dict) -> None:
+    """
+    Добавление строки рекрутинга опроса
+    :param data:
+    :return:
+    """
+    logging.info(f'add_recruting_opros')
+    async with async_session() as session:
+        session.add(RecrutingOpros(**data))
+        await session.commit()
+
+
+async def get_recruting_opros() -> RecrutingOpros:
+    """
+    Получение строки рекрутинга
+    :return:
+    """
+    logging.info(f'get_recruting')
+    async with async_session() as session:
+        recruting_opros = await session.scalars(select(RecrutingOpros))
+        list_recruting_opros = [opros for opros in recruting_opros]
+        return list_recruting_opros[-1]
+
+
+async def get_recruting_opros_id(recruting_id: int) -> RecrutingOpros:
+    """
+    Получение строки рекрутинга
+    :return:
+    """
+    logging.info(f'get_recruting')
+    async with async_session() as session:
+        return await session.scalar(select(RecrutingOpros).where(RecrutingOpros.id == recruting_id))
+
+
+async def get_recruting_opros_tg_id(tg_id: int) -> RecrutingOpros:
+    """
+    Получение строки рекрутинга
+    :return:
+    """
+    logging.info(f'get_recruting {tg_id}')
+    async with async_session() as session:
+        recruting_opros = await session.scalars(select(RecrutingOpros).where(RecrutingOpros.tg_id == tg_id))
+        if recruting_opros:
+            list_recruting_opros = [opros for opros in recruting_opros.all()]
+            if len(list_recruting_opros) > 0:
+                return list_recruting_opros[-1]
+            else:
+                return []

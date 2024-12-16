@@ -10,6 +10,7 @@ from utils.error_handling import error_handler
 
 router = Router()
 config: Config = load_config()
+router.message.filter(F.chat.type != "private")
 
 
 @router.callback_query()
@@ -19,7 +20,6 @@ async def all_callback(callback: CallbackQuery) -> None:
 
 
 @router.message()
-@error_handler
 async def all_message(message: Message, bot: Bot, ) -> None:
     logging.info(f'all_message {message.text}')
     if message.new_chat_members:  # Новый участник

@@ -62,13 +62,17 @@ async def info_info_process(user_to_action: int, message: Message):
         actions_all: list[ChatAction] = await rq.get_chat_action_tg_id(tg_id=user_to_action,
                                                                        type_action='warn',
                                                                        count_day=-1)
+        actions_7: list[ChatAction] = await rq.get_chat_action_tg_id(tg_id=user_to_action,
+                                                                     type_action='warn',
+                                                                     count_day=7)
         await message.answer(text=f'Клан: {user.clan_name}\n\n'
                                   f'Ник: {user.nickname}\n'
                                   f'ID: <code>{user.id_PUBG_MOBILE}</code>\n'
                                   f'Имя: <a href="tg://user?id={user.tg_id}">{user.name}</a>\n'
                                   f'Возраст: {user.age}\n'
-                                  f'Честь: {user.honor}\n'
-                                  f'Количество выговоров: {len(actions_all)}\n'
+                                  f'Честь: {user.honor}\n\n'
+                                  f'Выговоров: {len(actions_7)}\n'
+                                  f'Выговоров всего: {len(actions_all)}\n'
                                   f'В клане с {user.data_registration}')
     else:
         msg = await message.answer(text='Пользователь не найден')
