@@ -7,7 +7,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery, ChatInviteLink
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.filters import Command, StateFilter
-
+import datetime
 from keyboards.keyboard import keyboard_main_button
 from keyboards.keyboard import keyboard_pass_opros
 from utils.error_handling import error_handler
@@ -142,11 +142,13 @@ async def get_nickname(message: Message, state: FSMContext, bot: Bot):
     await rq.update_user_nickname(tg_id=message.from_user.id, nickname=message.text)
     general_group = await rq.get_groups_general()
     member = await bot.get_chat_member(user_id=message.from_user.id, chat_id=general_group.group_id)
+    expire_date = datetime.datetime.now() + datetime.timedelta(minutes=1)  # время истечения
     if member.status == 'left':
         invite_link: ChatInviteLink = await bot.create_chat_invite_link(
                 chat_id=general_group.group_id,
                 name="Одноразовая ссылка",
-                member_limit=1  # Ограничение: 1 пользователь
+                member_limit=1,  # Ограничение: 1 пользователь
+                expire_date=expire_date
             )
         # invite_link = await shorten_url(invite_link)
         await message.answer(text=f'Вы прошли регистрацию, вот ссылка на группу:'

@@ -18,8 +18,8 @@ router.message.filter(F.chat.type != "private")
 async def process_command_mute(message: Message, command: CommandObject, bot: Bot):
     """
     Обработка команды /mute
-    /mute @username [срок в часах, цифрой] [причина]
-    /mute [срок в часах, цифрой] [причина] - если ответным сообщением
+    /mute @username [срок в minutes, цифрой] [причина]
+    /mute [срок в minutes, цифрой] [причина] - если ответным сообщением
     :param message:
     :param command:
     :param bot:
@@ -37,12 +37,12 @@ async def process_command_mute(message: Message, command: CommandObject, bot: Bo
         return
     # флаг ответного сообщения
     reply_message = message.reply_to_message
-    # ОЖИДАЕМ ОТ ПОЛЬЗОВАТЕЛЬ: /mute [срок в часах, цифрой] [причина] - если ответным сообщением
+    # ОЖИДАЕМ ОТ ПОЛЬЗОВАТЕЛЬ: /mute [срок в minutes, цифрой] [причина] - если ответным сообщением
     if reply_message:
         arguments = command.args
         if not arguments:
             msg = await message.answer(
-                'Для применения команды /mute требуется указать срок в часах и по какой причине она применяется')
+                'Для применения команды /mute требуется указать срок в minutes и по какой причине она применяется')
             await asyncio.sleep(5)
             await msg.delete()
             return
@@ -54,7 +54,7 @@ async def process_command_mute(message: Message, command: CommandObject, bot: Bo
                     hour_mute = int(hour)
                 else:
                     msg = await message.answer(
-                        text='Количество часов необходимо указать числом')
+                        text='Количество minutes необходимо указать числом')
                     await asyncio.sleep(5)
                     await msg.delete()
                     return
@@ -69,16 +69,16 @@ async def process_command_mute(message: Message, command: CommandObject, bot: Bo
                                             bot=bot)
             else:
                 msg = await message.answer(
-                    text='Для применения команды /mute необходимо в параметрах указать срок в часах'
+                    text='Для применения команды /mute необходимо в параметрах указать срок в minutes'
                          ' и причину ее применения, например: /mute 5 Причина')
                 await asyncio.sleep(5)
                 await msg.delete()
                 return
     else:
-        # ОЖИДАЕМ ОТ ПОЛЬЗОВАТЕЛЬ: /mute @username [срок в часах, цифрой] [причина]
+        # ОЖИДАЕМ ОТ ПОЛЬЗОВАТЕЛЬ: /mute @username [срок в minutes, цифрой] [причина]
         arguments = command.args
         if not arguments:
-            msg = await message.answer(text='Для применения команды /mute необходимо в параметрах указать срок в часах'
+            msg = await message.answer(text='Для применения команды /mute необходимо в параметрах указать срок в minutes'
                                             ' и причину ее применения, например: /mute 5 Причина')
             await asyncio.sleep(5)
             await msg.delete()
@@ -99,7 +99,7 @@ async def process_command_mute(message: Message, command: CommandObject, bot: Bo
                                                 bot=bot)
                     else:
                         msg = await message.answer(
-                            text='Количество часов необходимо указать числом')
+                            text='Количество minutes необходимо указать числом')
                         await asyncio.sleep(5)
                         await msg.delete()
                         return
@@ -118,7 +118,7 @@ async def process_command_mute(message: Message, command: CommandObject, bot: Bo
                                                 bot=bot)
                     else:
                         msg = await message.answer(
-                            text='Количество часов необходимо указать числом')
+                            text='Количество minutes необходимо указать числом')
                         await asyncio.sleep(5)
                         await msg.delete()
                         return
@@ -126,7 +126,7 @@ async def process_command_mute(message: Message, command: CommandObject, bot: Bo
                 else:
                     await message.answer(text='Пользователь с таким username не найден')
         else:
-            await message.answer(text='Для применения команды /mute необходимо в параметрах указать срок в часах'
+            await message.answer(text='Для применения команды /mute необходимо в параметрах указать срок в minutes'
                                       ' и причину ее применения, например: /mute 5 Причина')
 
 
@@ -161,6 +161,6 @@ async def mute_info_process(user_to_action: int, reason: str, message: Message, 
         await message.answer(f"Администратор <a href='tg://user?id={message.from_user.id}'>"
                              f"{message.from_user.full_name}</a> замутил пользователя "
                              f" <a href='tg://user?id={user_to_action}'>"
-                             f"{user.nickname if user.nickname else user.username}</a> на {hour_mute} часов по причине: {reason}")
+                             f"{user.nickname if user.nickname else user.username}</a> на {hour_mute} minutes по причине: {reason}")
     else:
         await message.answer(f'🚫 Этому пользователю нельзя ограничить возможность отправки сообщений!')

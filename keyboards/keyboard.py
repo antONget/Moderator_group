@@ -9,8 +9,8 @@ def keyboard_main_button() -> ReplyKeyboardMarkup:
 
 
 def main_keyboard(auth: bool) -> InlineKeyboardMarkup:
-    button_1 = InlineKeyboardButton(text="О клане", callback_data='about_clan')
-    button_2 = InlineKeyboardButton(text="Правила клана", callback_data='rule_clan')
+    button_1 = InlineKeyboardButton(text="О клане", url='https://telegra.ph/O-KLANE-12-17')
+    button_2 = InlineKeyboardButton(text="Правила клана", url='https://telegra.ph/PRAVILA-KLANA-12-14-3')
     button_3 = InlineKeyboardButton(text="Правила пранков", callback_data='rule_prank')
     button_4 = InlineKeyboardButton(text="Набор в клан", callback_data='recruting_clan')
     button_5 = InlineKeyboardButton(text="Перевод", callback_data='rule_prank')
@@ -75,4 +75,11 @@ def keyboard_list_group(list_group: list, tg_id_recruting: int) -> InlineKeyboar
 def keyboard_link_clan(id_clan: int) -> InlineKeyboardMarkup:
     button_1 = InlineKeyboardButton(text='Создать ссылку', callback_data=f'link_clan_{id_clan}')
     keyboard = InlineKeyboardMarkup(inline_keyboard=[[button_1]])
+    return keyboard
+
+
+def keyboard_action_recruting_question() -> InlineKeyboardMarkup:
+    button_1 = InlineKeyboardButton(text='Да', callback_data=f'yes_recruting_clan')
+    button_2 = InlineKeyboardButton(text='Нет', callback_data=f'no_recruting_clan')
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[[button_1], [button_2]])
     return keyboard

@@ -68,9 +68,11 @@ async def process_consider(callback: CallbackQuery, bot: Bot):
     await callback.message.delete()
     await bot.send_message(chat_id=recruting_opros.tg_id,
                            text='Вы приняты в клан, для того, чтобы я вам отправил ссылку на чат клана необходимо'
-                                ' сначала сменить никнейм в PUBG MOBILE и добавить приписку клана с уголками: 『BY』\n\n'
+                                ' сначала сменить никнейм в PUBG MOBILE и добавить приписку клана с уголками вначале'
+                                ' ника:\n\n'
+                                '『BY』\n\n'
                                 'Далее отправьте, пожалуйста, скриншот, который подтвердит, что вы сменили никнейм'
-                                ' в PUBG MOBILE" (одно изображение)',
+                                ' в PUBG MOBILE',
                            reply_markup=keyboard_consider_opros())
     await callback.answer()
 
