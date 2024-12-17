@@ -20,8 +20,8 @@ async def into_command_list(message: Message, bot: Bot) -> None:
     logging.info(f'into_command_list {message.chat.id}')
     await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)  # Удаление сообщения
     if not await is_admin(message, bot):
-        await message.reply("Для использования этой команды бот должен быть администратором в канале,"
-                            " а вы администратором или владельцем")
+        await message.answer("Для использования этой команды бот должен быть администратором в канале,"
+                             " а вы администратором или владельцем")
         return
 
     users = await rq.get_users()
