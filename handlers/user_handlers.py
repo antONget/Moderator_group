@@ -263,7 +263,7 @@ async def recruting_opros_6(message: Message, state: FSMContext, bot: Bot):
               f'ID аккаунта из PUBG MOBILE: {data["opros_1"]}\n' \
               f'Возраст: {data["opros_2"]}\n' \
               f'Средний кд в Metro Royale: {data["opros_3"]}\n' \
-              f'О себе: {data["opros_1"]}'
+              f'О себе: {message.text}'
     media_group = []
     i = 0
     for photo in [data['opros_4'], data['opros_5']]:
@@ -337,10 +337,12 @@ async def recruting_send_screenshot(callback: CallbackQuery, state: FSMContext, 
     group = await rq.get_groups_group_id(group_id=int(answer))
     recruting = await rq.get_recruting()
     if recruting.is_recruting == 'True':
+        expire_date = datetime.datetime.now() + datetime.timedelta(days=1)  # время истечения
         invite_link: ChatInviteLink = await bot.create_chat_invite_link(
             chat_id=int(answer),
             name=f"Одноразовая ссылка для клана - {group.group_title}",
-            member_limit=1
+            member_limit=1,
+            expire_date=expire_date
         )
         await callback.message.edit_text(text=f'Ссылка для доступа к клану {group.group_title} - {invite_link.invite_link}',
                                          reply_markup=None)
