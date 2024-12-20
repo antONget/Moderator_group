@@ -11,7 +11,7 @@ import traceback
 from typing import Any, Dict
 from config_data.config import Config, load_config
 from handlers import other_handlers, user_handlers, info, kick, ban, unban, mute, unmute, includ, opros, set_lider,\
-    list, del_handlers, warn, admin_handlers
+    list, del_handlers, warn, admin_handlers, msg
 from middleware.throttling import ThrottlingMiddleware
 from database.models import async_main
 # Инициализируем logger
@@ -23,8 +23,8 @@ async def main():
     # Конфигурируем логирование
     logging.basicConfig(
         level=logging.INFO,
-        filename="py_log.log",
-        filemode='w',
+        # filename="py_log.log",
+        # filemode='w',
         format='%(filename)s:%(lineno)d #%(levelname)-8s '
                '[%(asctime)s] - %(name)s - %(message)s')
 
@@ -44,7 +44,7 @@ async def main():
     dp.include_router(user_handlers.router)
     dp.include_router(admin_handlers.router)
     dp.include_routers(info.router, kick.router, ban.router, unban.router, mute.router, unmute.router,  includ.router,
-                       opros.router, set_lider.router, list.router, del_handlers.router, warn.router)
+                       opros.router, set_lider.router, list.router, del_handlers.router, warn.router, msg.router)
     dp.include_router(other_handlers.router)
 
     dp.callback_query.middleware(ThrottlingMiddleware())

@@ -25,6 +25,7 @@ async def into_command_list(message: Message, bot: Bot) -> None:
         return
 
     users = await rq.get_users()
+    # print(len(users))
     group = await rq.get_groups_group_id(group_id=message.chat.id)
     # groups = await rq.get_groups()
     # text = ''
@@ -42,6 +43,7 @@ async def into_command_list(message: Message, bot: Bot) -> None:
         for user in users:
             member = await bot.get_chat_member(user_id=user.tg_id,
                                                chat_id=message.chat.id)
+            # print(member.status)
             if member.status not in ['left', 'kicked', 'restricted']:
                 if user.nickname:
                     i += 1
@@ -49,6 +51,7 @@ async def into_command_list(message: Message, bot: Bot) -> None:
             # await bot.send_message(chat_id=config.tg_bot.support_id,
             #                        text=text)
         # await message.answer(text=text)
+        # print('text', text)
     else:
         text = f'{message.chat.title}\n\n'
         member_text = ''
@@ -63,6 +66,7 @@ async def into_command_list(message: Message, bot: Bot) -> None:
                     text += f'{i}. <a href="tg://user?id={user.tg_id}">{user.nickname}</a>\n'
         # await bot.send_message(chat_id=config.tg_bot.support_id,
         #                        text=member_text)
+    print('text', text)
     if text != '':
         # await bot.send_message(chat_id=config.tg_bot.support_id,
         #                        text=text)

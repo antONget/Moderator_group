@@ -28,9 +28,12 @@ async def all_message(message: Message, bot: Bot, ) -> None:
     if message.left_chat_member:  # Ушел участник
         await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
         general_group = await rq.get_groups_general()
-        await bot.ban_chat_member(chat_id=general_group.group_id, user_id=message.from_user.id)
-        await asyncio.sleep(5)
-        await bot.unban_chat_member(chat_id=general_group.group_id, user_id=message.from_user.id)
+        try:
+            await bot.ban_chat_member(chat_id=general_group.group_id, user_id=message.from_user.id)
+            await asyncio.sleep(5)
+            await bot.unban_chat_member(chat_id=general_group.group_id, user_id=message.from_user.id)
+        except:
+            pass
 
     # if message.new_chat_member.status == 'kick':  # Кикнули участника
     #     general_group = await rq.get_groups_general()
@@ -93,8 +96,9 @@ async def all_message(message: Message, bot: Bot, ) -> None:
         return
 
     user = await rq.get_user_tg_id(tg_id=message.from_user.id)
-    if user.username != message.from_user.username:  # Проверка актуальности username
-        await rq.update_username(tg_id=message.from_user.id, username=message.from_user.username)
+    if user:
+        if user.username != message.from_user.username:  # Проверка актуальности username
+            await rq.update_username(tg_id=message.from_user.id, username=message.from_user.username)
 
     if message.photo:
         logging.info(f'all_message message.photo')

@@ -104,7 +104,7 @@ async def process_press_start(message: Message, bot: Bot) -> None:
 
 @router.callback_query(F.data == 'recruting_clan')
 async def recruting_clan(callback: CallbackQuery, state: FSMContext):
-    logging.info('recruting_clan')
+    logging.info(f'recruting_clan {callback.data}')
     await callback.answer()
     recruting_opros = await rq.get_recruting_opros_tg_id(tg_id=callback.from_user.id)
     if recruting_opros:
@@ -122,10 +122,9 @@ async def recruting_clan(callback: CallbackQuery, state: FSMContext):
                                   reply_markup=keyboard_action_recruting_question())
 
 
-
 @router.callback_query(F.data == 'no_recruting_clan')
 async def no_recruting_clan(callback: CallbackQuery, state: FSMContext):
-    logging.info('no_recruting_clan')
+    logging.info(f'no_recruting_clan  {callback.data}')
     await callback.message.delete()
     await callback.answer()
     recruting_opros = await rq.get_recruting_opros_tg_id(tg_id=callback.from_user.id)
@@ -166,7 +165,7 @@ async def no_recruting_clan(callback: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data == 'yes_recruting_clan')
 async def yes_recruting_clan(callback: CallbackQuery, state: FSMContext):
-    logging.info('yes_recruting_clan')
+    logging.info(f'yes_recruting_clan  {callback.data}')
     await callback.message.delete()
     recruting = await rq.get_recruting()
     if not recruting:
@@ -360,7 +359,7 @@ async def recruting_opros_6(message: Message, state: FSMContext, bot: Bot):
 
 @router.callback_query(F.data == 'send_screenshot')
 async def recruting_send_screenshot(callback: CallbackQuery, state: FSMContext):
-    logging.info('recruting_send_screenshot')
+    logging.info(f'recruting_send_screenshot  {callback.data}')
     await callback.answer()
     await callback.message.edit_text('Отправьте скриншот',
                                      reply_markup=None)
@@ -388,7 +387,7 @@ async def recruting_opros_7(message: Message, state: FSMContext, bot: Bot):
             else:
                 media_group.append(InputMediaPhoto(media=photo))
         list_admins = config.tg_bot.admin_ids.split(',')
-        opros_recruting = await rq.get_recruting_opros()
+        opros_recruting = await rq.get_recruting_opros_tg_id(tg_id=message.from_user.id)
         for admin in list_admins:
             try:
                 await bot.send_media_group(chat_id=admin,
@@ -406,7 +405,7 @@ async def recruting_opros_7(message: Message, state: FSMContext, bot: Bot):
 
 @router.callback_query(F.data.startswith('link_clan_'))
 async def recruting_send_screenshot(callback: CallbackQuery, state: FSMContext, bot: Bot):
-    logging.info('recruting_send_screenshot')
+    logging.info(f'recruting_send_screenshot  {callback.data}')
     answer = callback.data.split('_')[-1]
     group = await rq.get_groups_group_id(group_id=int(answer))
     recruting = await rq.get_recruting()

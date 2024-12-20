@@ -39,13 +39,14 @@ async def into_command_opros(message: Message, state: FSMContext, bot: Bot):
         return
     logging.info('into_command_opros')
     user = await rq.get_user_tg_id(tg_id=message.from_user.id)
-    if not user.age:
-        await message.answer("Сколько вам лет? (принимаются только цифры)")
-    else:
-        await message.answer(
-            " Сколько вам лет? (принимаются только цифры)",
-            reply_markup=keyboard_pass_opros(callback='button1')
-        )
+    if user:
+        if not user.age:
+            await message.answer("Сколько вам лет? (принимаются только цифры)")
+        else:
+            await message.answer(
+                " Сколько вам лет? (принимаются только цифры)",
+                reply_markup=keyboard_pass_opros(callback='button1')
+            )
     await state.set_state(Registration.year)
 
 

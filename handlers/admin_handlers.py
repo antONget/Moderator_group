@@ -42,15 +42,13 @@ async def process_deny(callback: CallbackQuery, bot: Bot):
     :param bot:
     :return:
     """
-    logging.info('process_deny')
+    logging.info(f'process_deny  {callback.data}')
     answer = callback.data.split('_')[-1]
     recruting_opros = await rq.get_recruting_opros_id(recruting_id=int(answer))
     await bot.delete_message(chat_id=callback.message.chat.id,
                              message_id=callback.message.message_id)
-    await bot.edit_message_text(chat_id=recruting_opros.tg_id,
-                                text='К сожалению, вы не приняты в клан, попробуйте в следующий раз',
-                                message_id=callback.message.message_id,
-                                reply_markup=None)
+    await bot.send_message(chat_id=recruting_opros.tg_id,
+                           text='К сожалению, вы не приняты в клан, попробуйте в следующий раз')
     await callback.answer()
 
 
@@ -62,7 +60,7 @@ async def process_consider(callback: CallbackQuery, bot: Bot):
     :param bot:
     :return:
     """
-    logging.info('process_consider')
+    logging.info(f'process_consider  {callback.data}')
     answer = callback.data.split('_')[-1]
     recruting_opros = await rq.get_recruting_opros_id(recruting_id=int(answer))
     await callback.message.delete()
@@ -85,7 +83,7 @@ async def process_accept(callback: CallbackQuery, bot: Bot):
     :param bot:
     :return:
     """
-    logging.info('process_accept')
+    logging.info(f'process_accept  {callback.data}')
     answer = callback.data.split('_')[-1]
     recruting_opros = await rq.get_recruting_opros_id(recruting_id=int(answer))
     list_groups = await rq.get_groups()
@@ -103,7 +101,7 @@ async def process_select_clan(callback: CallbackQuery, bot: Bot):
     :param bot:
     :return:
     """
-    logging.info('process_accept')
+    logging.info(f'process_accept  {callback.data}')
     clan_id = callback.data.split('_')[-2]
     group = await rq.get_groups_group_id(group_id=int(clan_id))
     tg_id_recruting = callback.data.split('_')[-1]
