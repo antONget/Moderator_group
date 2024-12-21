@@ -41,8 +41,11 @@ async def into_command_list(message: Message, bot: Bot) -> None:
             # text = ''
         i = 0
         for user in users:
-            member = await bot.get_chat_member(user_id=user.tg_id,
-                                               chat_id=message.chat.id)
+            try:
+                member = await bot.get_chat_member(user_id=user.tg_id,
+                                                   chat_id=message.chat.id)
+            except:
+                continue
             # print(member.status)
             if member.status not in ['left', 'kicked', 'restricted']:
                 if user.nickname:
