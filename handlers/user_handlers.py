@@ -78,7 +78,7 @@ async def process_press_start(message: Message, bot: Bot) -> None:
 
         member = await bot.get_chat_member(user_id=message.from_user.id,
                                            chat_id=group.group_id)
-        if member.status != 'left':
+        if member.status not in ['left', 'kicked', 'restricted']:
             auth = True
     # получаем данные о пользователе
     user = await rq.get_user_tg_id(tg_id=tg_id)
