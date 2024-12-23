@@ -78,10 +78,8 @@ async def process_press_start(message: Message, bot: Bot) -> None:
 
         member = await bot.get_chat_member(user_id=message.from_user.id,
                                            chat_id=group.group_id)
-        print(member.status)
         if member.status != 'left':
             auth = True
-    print(auth)
     # получаем данные о пользователе
     user = await rq.get_user_tg_id(tg_id=tg_id)
     # выводим клавиатуру для авторизованных и нет пользователей
