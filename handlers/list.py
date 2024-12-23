@@ -67,6 +67,9 @@ async def into_command_list(message: Message, bot: Bot) -> None:
                 if user.nickname:
                     i += 1
                     text += f'{i}. <a href="tg://user?id={user.tg_id}">{user.nickname}</a>\n'
+            if i % 100 == 0:
+                await message.answer(text=text)
+                text = ''
         # await bot.send_message(chat_id=config.tg_bot.support_id,
         #                        text=member_text)
     print('text', text)
