@@ -2,7 +2,7 @@ from aiogram import Router, Bot, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.types import FSInputFile
 from database import requests as rq
-from database.models import User
+from database.models import User, ClanGroup
 from config_data.config import Config, load_config
 import logging
 import asyncio
@@ -24,6 +24,31 @@ async def all_message(message: Message, bot: Bot, ) -> None:
     logging.info(f'all_message {message.text}')
     if message.new_chat_members:  # Новый участник
         await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
+        # если человек зашел в общий чат клана, то бот проверяет, состоит ли данный юзер в чатах клана,
+        # если нет, то сразу банит в общем чате
+        general_group: ClanGroup = await rq.get_groups_general()
+        if message.chat.id == general_group.group_id:
+            groups: list[ClanGroup] = await rq.get_groups()
+            is_ban = True
+            for group in groups:
+                if group.group_clan == 'general':
+                    continue
+                else:
+                    try:
+                        member = await bot.get_chat_member(user_id=message.from_user.tg_id,
+                                                           chat_id=group.group_id)
+                        if member.status == 'member':
+                            is_ban = False
+                    except:
+                        pass
+            if is_ban:
+                msg = await message.answer(text=f'Пользователь {message.from_user.id} не состоит в клановских беседах'
+                                                f' и будет забанен на один час')
+                await asyncio.sleep(1 * 60)
+                await msg.delete()
+                await bot.ban_chat_member(chat_id=general_group.group_id, user_id=message.from_user.id)
+                await asyncio.sleep(60 * 60)
+                await bot.unban_chat_member(chat_id=general_group.group_id, user_id=message.from_user.id)
 
     if message.left_chat_member:  # Ушел участник
         await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)

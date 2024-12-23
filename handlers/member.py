@@ -64,7 +64,7 @@ async def info_member_process(user_to_action: int, message: Message, bot: Bot):
     for group in groups:
         try:
             member = await bot.get_chat_member(user_id=user.tg_id,
-                                               chat_id=message.chat.id)
+                                               chat_id=group.group_id)
             text += f'<i>{group.group_title}</i> - {member.status}\n'
         except:
             text += f'<i>{group.group_title}</i>\n'
