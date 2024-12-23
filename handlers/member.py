@@ -9,7 +9,7 @@ from utils.error_handling import error_handler
 from aiogram.filters import CommandObject, Command
 
 router = Router()
-router.message.filter(F.chat.type != "private")
+router.message.filter(F.chat.type == "private")
 
 
 @router.message(Command('member'))
