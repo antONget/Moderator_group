@@ -62,13 +62,12 @@ async def info_member_process(user_to_action: int, message: Message, bot: Bot):
     groups: list[ClanGroup] = await rq.get_groups()
     text = f'<b>Статус пользователя {user.name} {user.clan_name}</b>\n\n'
     for group in groups:
-        text += '1'
         try:
             member = await bot.get_chat_member(user_id=user.tg_id,
                                                chat_id=message.chat.id)
             text += f'<i>{group.group_title}</i> - {member.status}\n'
         except:
-            pass
+            text += f'<i>{group.group_title}</i>\n'
     if user:
         await message.answer(text=text)
     else:
