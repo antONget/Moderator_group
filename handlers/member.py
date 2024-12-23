@@ -60,7 +60,7 @@ async def info_member_process(user_to_action: int, message: Message, bot: Bot):
     logging.info('info_member_process')
     user: User = await rq.get_user_tg_id(tg_id=user_to_action)
     groups: list[ClanGroup] = await rq.get_groups()
-    text = f'<b>Статус пользователя {user.name} {user.clan_name}\n\n'
+    text = f'<b>Статус пользователя {user.name} {user.clan_name}</b>\n\n'
     for group in groups:
         try:
             member = await bot.get_chat_member(user_id=user.tg_id,
