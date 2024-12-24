@@ -122,5 +122,5 @@ async def warn_info_process(user_to_action: int, reason: str, message: Message, 
                          f"{message.from_user.full_name}</a> объявил предупреждение"
                          f" <a href='tg://user?id={user_to_action}'>"
                          f"{user.nickname if user.nickname else user.username}</a>"
-                         f" ({len(actions_7)}/5"
+                         f" ({len(actions_7)}/5)"
                          f" по причине: {reason}")
