@@ -359,8 +359,8 @@ async def recruting_opros_6(message: Message, state: FSMContext, bot: Bot):
 async def recruting_send_screenshot(callback: CallbackQuery, state: FSMContext):
     logging.info(f'recruting_send_screenshot  {callback.data}')
     await callback.answer()
-    await callback.message.edit_text('Отправьте скриншот',
-                                     reply_markup=None)
+    await callback.message.answer(text='Отправьте скриншот',
+                                  reply_markup=None)
     await state.set_state(state=Recruting.opros_7)
 
 

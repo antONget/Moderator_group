@@ -38,7 +38,7 @@ async def into_command_list(message: Message, bot: Bot) -> None:
                 if user.nickname:
                     i += 1
                     text += f'{i}. <a href="tg://user?id={user.tg_id}">{user.nickname}</a>\n'
-            if i % 100 == 0:
+            if i % 100 == 0 and i != 0:
                 if text:
                     await message.answer(text=text)
                     text = ''
@@ -53,7 +53,7 @@ async def into_command_list(message: Message, bot: Bot) -> None:
                 if user.nickname:
                     i += 1
                     text += f'{i}. <a href="tg://user?id={user.tg_id}">{user.nickname}</a>\n'
-            if i % 100 == 0:
+            if i % 100 == 0 and i != 0:
                 if text:
                     await message.answer(text=text)
                     text = ''

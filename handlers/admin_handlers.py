@@ -87,7 +87,7 @@ async def process_accept(callback: CallbackQuery, bot: Bot):
     answer = callback.data.split('_')[-1]
     recruting_opros = await rq.get_recruting_opros_id(recruting_id=int(answer))
     list_groups = await rq.get_groups()
-    await callback.message.answer(text='Выберите клан для добавления пользователя',
+    await callback.message.edit_text(text='Выберите клан для добавления пользователя',
                                      reply_markup=keyboard_list_group(list_group=list_groups,
                                                                       tg_id_recruting=recruting_opros.tg_id))
     await callback.answer()
