@@ -29,6 +29,13 @@ def main_keyboard(auth: bool) -> InlineKeyboardMarkup:
     return keyboard
 
 
+def main_keyboard_group() -> InlineKeyboardMarkup:
+    button_1 = InlineKeyboardButton(text="О клане", url='https://telegra.ph/O-KLANE-12-17')
+    button_2 = InlineKeyboardButton(text="Правила клана", url='https://telegra.ph/PRAVILA-KLANA-12-14-3')
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[[button_1], [button_2]])
+    return keyboard
+
+
 def keyboard_pass_opros(callback: str) -> InlineKeyboardMarkup:
     button_1 = InlineKeyboardButton(text='Пропустить', callback_data=callback)
     keyboard = InlineKeyboardMarkup(inline_keyboard=[[button_1]])

@@ -6,6 +6,7 @@ from database.models import User, ClanGroup
 from config_data.config import Config, load_config
 import logging
 import asyncio
+from keyboards.keyboard import main_keyboard_group
 from utils.error_handling import error_handler
 
 router = Router()
@@ -28,6 +29,9 @@ async def all_message(message: Message, bot: Bot, ) -> None:
         # если нет, то сразу банит в общем чате
         general_group: ClanGroup = await rq.get_groups_general()
         if message.chat.id == general_group.group_id:
+            user: User = await rq.get_user_tg_id(tg_id=message.from_user.id)
+            await message.answer(text=f'{user.name}, добро пожаловать в общий чат клана!',
+                                 reply_markup=main_keyboard_group())
             groups: list[ClanGroup] = await rq.get_groups()
             is_ban = True
             for group in groups:
@@ -49,6 +53,11 @@ async def all_message(message: Message, bot: Bot, ) -> None:
                 await bot.ban_chat_member(chat_id=general_group.group_id, user_id=message.from_user.id)
                 await asyncio.sleep(60 * 60)
                 await bot.unban_chat_member(chat_id=general_group.group_id, user_id=message.from_user.id)
+        else:
+            await message.answer(text="Если ты еще не зашел в общий чат клана, то не сможешь писать сообщения,"
+                                      " перейди в бота @clan_by_bot напиши команду /start и команду"
+                                      " /opros для прохождения опроса.",
+                                 reply_markup=main_keyboard_group())
 
     if message.left_chat_member:  # Ушел участник
         await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
