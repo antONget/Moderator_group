@@ -17,7 +17,7 @@ config: Config = load_config()
 async def on_user_join(event: ChatMemberUpdated, bot: Bot):
     logging.info(f'on_user_join {event.new_chat_member.status} {event}')
     # print(event)
-    if True:
+    if event.from_user.id != 6166594444:
         # await bot.delete_message(chat_id=event.chat.id, message_id=event.message_id)
         # если человек зашел в общий чат клана, то бот проверяет, состоит ли данный юзер в чатах клана,
         # если нет, то сразу банит в общем чате
