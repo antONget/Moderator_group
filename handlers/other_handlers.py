@@ -54,9 +54,11 @@ async def all_message(message: Message, bot: Bot, ) -> None:
                 await asyncio.sleep(60 * 60)
                 await bot.unban_chat_member(chat_id=general_group.group_id, user_id=message.from_user.id)
         else:
-            await message.answer(text="Если ты еще не зашел в общий чат клана, то не сможешь писать сообщения,"
-                                      " перейди в бота @clan_by_bot напиши команду /start и команду"
-                                      " /opros для прохождения опроса.",
+            user: User = await rq.get_user_tg_id(tg_id=message.from_user.id)
+            await message.answer(text=f"{user.name} , добро пожаловать в клан! "
+                                      f"Если ты еще не зашел в общий чат клана, то не сможешь писать сообщения,"
+                                      f" перейди в бота @clan_by_bot напиши команду /start и команду"
+                                      f" /opros для прохождения опроса.",
                                  reply_markup=main_keyboard_group())
 
     if message.left_chat_member:  # Ушел участник
