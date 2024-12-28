@@ -16,6 +16,7 @@ config: Config = load_config()
 @router.chat_member(F.new_chat_member)
 async def on_user_join(event: ChatMemberUpdated, bot: Bot):
     logging.info(f'on_user_join {event.new_chat_member.status} {event}')
+    return
     if event.new_chat_member.status == 'member':
         if event.from_user.id != 6166594444:
             # await bot.delete_message(chat_id=event.chat.id, message_id=event.message_id)
