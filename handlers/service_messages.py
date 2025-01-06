@@ -36,7 +36,7 @@ async def on_user_join(event: ChatMemberUpdated, bot: Bot):
                         continue
                     else:
                         try:
-                            member = await bot.get_chat_member(user_id=event.from_user.tg_id,
+                            member = await bot.get_chat_member(user_id=event.from_user.id,
                                                                chat_id=group.group_id)
                             if member.status == 'member':
                                 is_ban = False
@@ -48,8 +48,8 @@ async def on_user_join(event: ChatMemberUpdated, bot: Bot):
                                                   f' и будет забанен на один час')
                     print(event.from_user.id)
                     await bot.ban_chat_member(chat_id=general_group.group_id, user_id=event.from_user.id)
-                    await asyncio.sleep(1 * 60)
-                    await msg.delete()
+                    # await asyncio.sleep(1 * 60)
+                    # await msg.delete()
                     await asyncio.sleep(60 * 60)
                     await bot.unban_chat_member(chat_id=general_group.group_id, user_id=event.from_user.id)
             else:
