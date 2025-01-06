@@ -20,48 +20,48 @@ async def all_callback(callback: CallbackQuery) -> None:
     logging.info(callback.data)
 
 
-@router.message()
-async def all_message(message: Message, bot: Bot, ) -> None:
-    logging.info(f'all_message {message.text}')
-    # print(message.from_user.id, message.new_chat_members)
-    # if message.new_chat_members:  # Новый участник
-    #     await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
-    #     # если человек зашел в общий чат клана, то бот проверяет, состоит ли данный юзер в чатах клана,
-    #     # если нет, то сразу банит в общем чате
-    #     general_group: ClanGroup = await rq.get_groups_general()
-    #     print(general_group.group_id, message.chat.id)
-    #     if message.chat.id == general_group.group_id:
-    #         text = f'<a href="tg://user?id={message.from_user.id}">{message.from_user.full_name}</a>,' \
-    #                f' добро пожаловать в общий чат клана!'
-    #         await message.answer(text=text,
-    #                              reply_markup=main_keyboard_group())
-    #         groups: list[ClanGroup] = await rq.get_groups()
-    #         is_ban = True
-    #         for group in groups:
-    #             if group.group_clan == 'general':
-    #                 continue
-    #             else:
-    #                 try:
-    #                     member = await bot.get_chat_member(user_id=message.from_user.tg_id,
-    #                                                        chat_id=group.group_id)
-    #                     if member.status == 'member':
-    #                         is_ban = False
-    #                 except:
-    #                     pass
-    #         if is_ban:
-    #             msg = await message.answer(text=f'Пользователь {message.from_user.id} не состоит в клановских беседах'
-    #                                             f' и будет забанен на один час')
-    #             await asyncio.sleep(1 * 60)
-    #             await msg.delete()
-    #             await bot.ban_chat_member(chat_id=general_group.group_id, user_id=message.from_user.id)
-    #             await asyncio.sleep(60 * 60)
-    #             await bot.unban_chat_member(chat_id=general_group.group_id, user_id=message.from_user.id)
-    #     else:
-    #         await message.answer(text=f"<a href='tg://user?id={message.from_user.id}'>{message.from_user.full_name}</a>,\n\n"
-    #                                   f"Если ты еще не зашел в общий чат клана, то не сможешь писать сообщения,"
-    #                                   f" перейди в бота @clan_by_bot напиши команду /start и команду"
-    #                                   f" /opros для прохождения опроса.",
-    #                              reply_markup=main_keyboard_group())
+async def greeting_users(message: Message, bot: Bot):
+    member = await bot.get_chat_member(user_id=message.from_user.id,
+                                       chat_id=message.chat.id)
+    print(message.from_user.id, message.new_chat_members, member.status)
+    if message.new_chat_members:  # Новый участник
+        await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
+        # если человек зашел в общий чат клана, то бот проверяет, состоит ли данный юзер в чатах клана,
+        # если нет, то сразу банит в общем чате
+        general_group: ClanGroup = await rq.get_groups_general()
+        print(general_group.group_id, message.chat.id)
+        if message.chat.id == general_group.group_id:
+            text = f'<a href="tg://user?id={message.from_user.id}">{message.from_user.full_name}</a>,' \
+                   f' добро пожаловать в общий чат клана!'
+            await message.answer(text=text,
+                                 reply_markup=main_keyboard_group())
+            groups: list[ClanGroup] = await rq.get_groups()
+            is_ban = True
+            for group in groups:
+                if group.group_clan == 'general':
+                    continue
+                else:
+                    try:
+                        member = await bot.get_chat_member(user_id=message.from_user.id,
+                                                           chat_id=group.group_id)
+                        if member.status == 'member':
+                            is_ban = False
+                    except:
+                        pass
+            if is_ban:
+                msg = await message.answer(text=f'Пользователь {message.from_user.id} не состоит в клановских беседах'
+                                                f' и будет забанен на один час')
+                await asyncio.sleep(1 * 60)
+                await msg.delete()
+                await bot.ban_chat_member(chat_id=general_group.group_id, user_id=message.from_user.id)
+                await asyncio.sleep(60 * 60)
+                await bot.unban_chat_member(chat_id=general_group.group_id, user_id=message.from_user.id)
+        else:
+            await message.answer(text=f"<a href='tg://user?id={message.from_user.id}'>{message.from_user.full_name}</a>,\n\n"
+                                      f"Если ты еще не зашел в общий чат клана, то не сможешь писать сообщения,"
+                                      f" перейди в бота @clan_by_bot напиши команду /start и команду"
+                                      f" /opros для прохождения опроса.",
+                                 reply_markup=main_keyboard_group())
 
     if message.left_chat_member:  # Ушел участник
         await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
@@ -73,6 +73,11 @@ async def all_message(message: Message, bot: Bot, ) -> None:
         except:
             pass
 
+
+@router.message()
+async def all_message(message: Message, bot: Bot, ) -> None:
+    logging.info(f'all_message {message.text}')
+    # await greeting_users(message=message, bot=bot)
     # if message.new_chat_member.status == 'kick':  # Кикнули участника
     #     general_group = await rq.get_groups_general()
     #     await bot.ban_chat_member(chat_id=general_group.group_id, user_id=message.from_user.id)
@@ -106,6 +111,9 @@ async def all_message(message: Message, bot: Bot, ) -> None:
     if message.pinned_message:  # Закрепленное сообщение
         await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
 
+    #  ------ реакция на сообщения
+    if message.video_chat_started or message.video_chat_ended:
+        return
     general_group = await rq.get_groups_general()
     member = await bot.get_chat_member(user_id=message.from_user.id,
                                        chat_id=general_group.group_id)
@@ -125,11 +133,14 @@ async def all_message(message: Message, bot: Bot, ) -> None:
                                   clan_name=message.chat.title)
 
     if member.status in ['left', 'kicked']:
-        await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
+        try:
+            await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
+        except:
+            pass
         msg = await message.answer(
             'К сожалению, вы не состоите в общем чате клана и отправка сообщений вам не доступна.\n\n'
             'Пройдите опрос в боте @clan_by_bot для добавления в общий чат клана.')
-        await asyncio.sleep(5)
+        await asyncio.sleep(15)
         await msg.delete()
         return
 

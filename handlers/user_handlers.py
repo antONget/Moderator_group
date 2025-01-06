@@ -368,6 +368,8 @@ async def recruting_send_screenshot(callback: CallbackQuery, state: FSMContext):
 async def recruting_opros_7(message: Message, state: FSMContext, bot: Bot):
     logging.info('recruting_opros_7')
     if message.photo:
+        await state.set_state(state=None)
+        await message.answer(text='Ожидайте...')
         await message.delete()
         file_id = message.photo[-1].file_id
         recruting_opros = await rq.get_recruting_opros_tg_id(tg_id=message.from_user.id)
@@ -395,7 +397,6 @@ async def recruting_opros_7(message: Message, state: FSMContext, bot: Bot):
                                        reply_markup=keyboard_action_recruting_2(id_recruting=opros_recruting.id))
             except:
                 pass
-        await state.set_state(state=None)
     else:
         await message.answer(text='Пришлите фото')
         return

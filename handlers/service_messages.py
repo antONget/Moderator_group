@@ -16,7 +16,7 @@ config: Config = load_config()
 @router.chat_member(F.new_chat_member)
 async def on_user_join(event: ChatMemberUpdated, bot: Bot):
     logging.info(f'on_user_join {event.new_chat_member.status} {event}')
-    return
+    print(event.new_chat_member.status, event.from_user.id)
     if event.new_chat_member.status == 'member':
         if event.from_user.id != 6166594444:
             # await bot.delete_message(chat_id=event.chat.id, message_id=event.message_id)
@@ -53,7 +53,7 @@ async def on_user_join(event: ChatMemberUpdated, bot: Bot):
                     await asyncio.sleep(60 * 60)
                     await bot.unban_chat_member(chat_id=general_group.group_id, user_id=event.from_user.id)
             else:
-                await event.answer(text=f"<a href='tg://user?id={event.from_user.id}'>{event.from_user.full_name}</a>,\n\n"
+                await event.answer(text=f"<a href='tg://user?id={event.from_user.id}'>{event.from_user.full_name}</a>, добро пожаловать в клан!\n\n"
                                         f"Если ты еще не зашел в общий чат клана, то не сможешь писать сообщения,"
                                         f" перейди в бота @clan_by_bot напиши команду /start и команду"
                                         f" /opros для прохождения опроса.",
