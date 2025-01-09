@@ -47,12 +47,16 @@ async def into_command_list(message: Message, bot: Bot) -> None:
         text = f'{message.chat.title}\n\n'
         i = 0
         for user in users:
-            member = await bot.get_chat_member(user_id=user.tg_id,
-                                               chat_id=message.chat.id)
-            if member.status not in ['left', 'kicked', 'restricted']:
-                if user.nickname:
-                    i += 1
-                    text += f'{i}. <a href="tg://user?id={user.tg_id}">{user.nickname}</a>\n'
+            try:
+                member = await bot.get_chat_member(user_id=user.tg_id,
+                                                   chat_id=message.chat.id)
+
+                if member.status not in ['left', 'kicked', 'restricted']:
+                    if user.nickname:
+                        i += 1
+                        text += f'{i}. <a href="tg://user?id={user.tg_id}">{user.nickname}</a>\n'
+            except:
+                pass
             if i % 100 == 0 and i != 0:
                 if text:
                     await message.answer(text=text)
