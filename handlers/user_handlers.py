@@ -41,14 +41,16 @@ class Recruting(StatesGroup):
 @router.message(F.text == 'Главное меню')
 @router.message(F.text == '/get_dbfile')
 @error_handler
-async def process_press_start(message: Message, bot: Bot) -> None:
+async def process_press_start(message: Message, state: FSMContext, bot: Bot) -> None:
     """
     Обработка команды /start и 'Главное меню'
     :param message:
+    :param state:
     :param bot:
     :return:
     """
     logging.info('process_press_start ')
+    await state.set_state(state=None)
     if message.photo:
         print(message.photo[-1].file_id)
         return
