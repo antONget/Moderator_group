@@ -13,6 +13,7 @@ from config_data.config import Config, load_config
 from handlers import other_handlers, user_handlers, info, kick, ban, unban, mute, unmute, includ, opros, set_lider,\
     list, del_handlers, warn, admin_handlers, msg, member, service_messages
 from middleware.throttling import ThrottlingMiddleware
+from middleware.ChatRestrictionMiddleware import ChatRestrictionMiddleware
 from database.models import async_main
 # Инициализируем logger
 logger = logging.getLogger(__name__)
@@ -23,8 +24,8 @@ async def main():
     # Конфигурируем логирование
     logging.basicConfig(
         level=logging.INFO,
-        filename="py_log.log",
-        filemode='w',
+        # filename="py_log.log",
+        # filemode='w',
         format='%(filename)s:%(lineno)d #%(levelname)-8s '
                '[%(asctime)s] - %(name)s - %(message)s')
 
@@ -50,6 +51,7 @@ async def main():
 
     dp.callback_query.middleware(ThrottlingMiddleware())
     dp.message.middleware(ThrottlingMiddleware())
+    dp.message.middleware(ChatRestrictionMiddleware())
 
     @dp.error()
     async def error_handler(event: ErrorEvent, data: Dict[str, Any]):
