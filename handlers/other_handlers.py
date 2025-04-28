@@ -44,7 +44,7 @@ async def greeting_users(message: Message, bot: Bot):
                     try:
                         member = await bot.get_chat_member(user_id=message.from_user.id,
                                                            chat_id=group.group_id)
-                        if member.status == 'member':
+                        if member.status in ['member', 'administrator']:
                             is_ban = False
                     except:
                         pass
