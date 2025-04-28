@@ -91,7 +91,7 @@ async def process_press_start(message: Message, state: FSMContext, bot: Bot) -> 
     else:
         await message.answer(f"Здравствуйте!",
                              reply_markup=main_keyboard(auth=auth))
-    # если пользователь не состоит в группе то предлагаем пройти опрос
+    # если пользователь не состоит в группе, то предлагаем пройти опрос
     if auth:
         await message.answer(
             "Здравствуйте. Пройдите опрос через команду /opros, чтобы получить ссылку на основной чат.")

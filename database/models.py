@@ -22,6 +22,7 @@ class User(Base):
     name: Mapped[str] = mapped_column(String(), default='')
     age: Mapped[int] = mapped_column(Integer(), default=0)
     honor: Mapped[int] = mapped_column(Integer(), default=0)
+    all_honor: Mapped[int] = mapped_column(Integer(), default=0)
     data_registration: Mapped[str] = mapped_column(String(), default='date')
     id_PUBG_MOBILE: Mapped[int] = mapped_column(Integer(), default=0)
     role: Mapped[str] = mapped_column(String(), default='user')

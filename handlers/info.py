@@ -24,7 +24,10 @@ async def into_command_info(message: Message, bot: Bot, command: CommandObject) 
     """
     logging.info('into_command_info')
     # удаляем команду
-    await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
+    try:
+        await message.delete()
+    except:
+        pass
     if message.reply_to_message:
         user_to_action = message.reply_to_message.from_user.id
         await info_info_process(user_to_action=user_to_action, message=message)
@@ -41,9 +44,12 @@ async def into_command_info(message: Message, bot: Bot, command: CommandObject) 
                     user_to_action = user.tg_id
                     await info_info_process(user_to_action=user_to_action, message=message)
                 else:
-                    msg = await message.answer(text=f'Пользователя с username {argument} не найден')
+                    msg1 = await message.answer(text=f'Пользователя с username {argument} не найден')
                     await asyncio.sleep(5)
-                    await msg.delete()
+                    try:
+                        await msg1.delete()
+                    except:
+                        pass
         else:
             user_to_action = message.from_user.id
             await info_info_process(user_to_action=user_to_action, message=message)
@@ -71,10 +77,14 @@ async def info_info_process(user_to_action: int, message: Message):
                                   f'Имя: <a href="tg://user?id={user.tg_id}">{user.name}</a>\n'
                                   f'Возраст: {user.age}\n'
                                   f'Честь: {user.honor}\n\n'
+                                  f"Вся честь: {user.all_honor}\n"
                                   f'Выговоров: {len(actions_7)}\n'
                                   f'Выговоров всего: {len(actions_all)}\n'
                                   f'В клане с {user.data_registration}')
     else:
-        msg = await message.answer(text='Пользователь не найден')
+        msg2 = await message.answer(text='Пользователь не найден')
         await asyncio.sleep(5)
-        await msg.delete()
+        try:
+            await msg2.delete()
+        except:
+            pass

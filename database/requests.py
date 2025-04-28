@@ -2,7 +2,7 @@ import logging
 
 from database.models import async_session
 from database.models import User, ClanGroup, Chat_reaction, ChatAction, Recruting, RecrutingOpros
-from sqlalchemy import select
+from sqlalchemy import select, update
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 
@@ -49,6 +49,37 @@ async def update_honor(tg_id: int) -> None:
         user = await session.scalar(select(User).where(User.tg_id == tg_id))
         honor = user.honor
         user.honor = honor + 1
+        user.all_honor += 1
+        await session.commit()
+
+
+async def change_honor(tg_id: int, sign: str, number: int) -> None:
+    """
+    Изменяем четь у определенного пользователя на число
+    :param tg_id:
+    :param sign:
+    :param number:
+    :return:
+    """
+    logging.info('change_honor')
+    async with async_session() as session:
+        user = await session.scalar(select(User).where(User.tg_id == tg_id))
+        if sign == "+":
+            user.honor += number
+        else:
+            user.honor -= number
+        await session.commit()
+
+
+async def reset_honor() -> None:
+    """
+    Сбрасываем у всех пользователей честь до 0
+    :return:
+    """
+    logging.info('reset_honor')
+    async with async_session() as session:
+        stmt = update(User).values(honor=0)  # Асинхронно совместимый запрос
+        await session.execute(stmt)
         await session.commit()
 
 
