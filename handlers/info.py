@@ -76,8 +76,8 @@ async def info_info_process(user_to_action: int, message: Message):
                                   f'ID: <code>{user.id_PUBG_MOBILE}</code>\n'
                                   f'Имя: <a href="tg://user?id={user.tg_id}">{user.name}</a>\n'
                                   f'Возраст: {user.age}\n'
-                                  f'Честь: {user.honor}\n\n'
-                                  f"Вся честь: {user.all_honor}\n"
+                                  f'Честь: {user.all_honor}\n\n'
+                                  f"Вся честь: {user.honor}\n"
                                   f'Выговоров: {len(actions_7)}\n'
                                   f'Выговоров всего: {len(actions_all)}\n'
                                   f'В клане с {user.data_registration}')
