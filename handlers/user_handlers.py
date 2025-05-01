@@ -52,7 +52,7 @@ async def process_press_start(message: Message, state: FSMContext, bot: Bot) -> 
     logging.info('process_press_start ')
     await state.set_state(state=None)
     if message.photo:
-        print(message.photo[-1].file_id)
+        logging.info(message.photo[-1].file_id)
         return
     if message.text == '/get_dbfile':
         file_path = "database/db.sqlite3"
@@ -173,13 +173,13 @@ async def yes_recruting_clan(callback: CallbackQuery, state: FSMContext):
     msg = ''
     if recruting.is_recruting == 'True':
         recruting_opros = await rq.get_recruting_opros_tg_id(tg_id=callback.from_user.id)
-        print(recruting_opros)
+        # print(recruting_opros)
         if recruting_opros:
             date_format = '%d-%m-%Y %H:%M'
             current_date = datetime.datetime.now().strftime('%d-%m-%Y %H:%M')
             delta_time = (datetime.datetime.strptime(current_date, date_format) - datetime.datetime.strptime(recruting_opros.data_opros,
                                                                                            date_format))
-            print(delta_time.days)
+            # print(delta_time.days)
             if delta_time.days < 7:
                 await callback.message.answer(text='На текущий момент набор в клан закрыт.',
                                               reply_markup=None)

@@ -23,13 +23,13 @@ async def all_callback(callback: CallbackQuery) -> None:
 async def greeting_users(message: Message, bot: Bot):
     member = await bot.get_chat_member(user_id=message.from_user.id,
                                        chat_id=message.chat.id)
-    print(message.from_user.id, message.new_chat_members, member.status)
+    # print(message.from_user.id, message.new_chat_members, member.status)
     if message.new_chat_members:  # Новый участник
         await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
         # если человек зашел в общий чат клана, то бот проверяет, состоит ли данный юзер в чатах клана,
         # если нет, то сразу банит в общем чате
         general_group: ClanGroup = await rq.get_groups_general()
-        print(general_group.group_id, message.chat.id)
+        # print(general_group.group_id, message.chat.id)
         if message.chat.id == general_group.group_id:
             text = f'<a href="tg://user?id={message.from_user.id}">{message.from_user.full_name}</a>,' \
                    f' добро пожаловать в общий чат клана!'
@@ -131,7 +131,7 @@ async def all_message(message: Message, bot: Bot, ) -> None:
         await rq.update_clan_name(tg_id=message.from_user.id,
                                   username=username,
                                   clan_name=message.chat.title)
-
+    # print(member.status)
     if member.status in ['left', 'kicked']:
         try:
             await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)

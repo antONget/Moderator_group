@@ -66,19 +66,18 @@ async def change_honor(tg_id: int, sign: str, number: int) -> None:
         user = await session.scalar(select(User).where(User.tg_id == tg_id))
         if sign == "+":
             user.honor += number
+            user.all_honor += number
         else:
             user.honor -= number
+            user.all_honor -= number
         await session.commit()
 
 
 async def reset_honor() -> None:
-    """
-    Сбрасываем у всех пользователей честь до 0
-    :return:
-    """
+    """сбрасываем честь у всех пользователей до 0"""
     logging.info('reset_honor')
     async with async_session() as session:
-        stmt = update(User).values(honor=0)  # Асинхронно совместимый запрос
+        stmt = update(User).values(all_honor=0)
         await session.execute(stmt)
         await session.commit()
 

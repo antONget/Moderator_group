@@ -54,10 +54,10 @@ async  def parse_warn_time():
                 event_time = DT.strptime(datetime_str, "%Y-%m-%d %H:%M:%S")  # Замените формат на ваш
 
                 # Сравниваем с текущим временем
-                if current_time > event_time:
-                    print(1)  # Текущее время больше
-                else:
-                    print(0)
+                # if current_time > event_time:
+                #     print(1)  # Текущее время больше
+                # else:
+                #     print(0)
 
     scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
     scheduler.add_job(minute="*/15")

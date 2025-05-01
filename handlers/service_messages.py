@@ -16,7 +16,7 @@ config: Config = load_config()
 @router.chat_member(F.new_chat_member)
 async def on_user_join(event: ChatMemberUpdated, bot: Bot):
     logging.info(f'on_user_join {event.new_chat_member.status} {event}')
-    print(event.new_chat_member.status, event.from_user.id)
+    # print(event.new_chat_member.status, event.from_user.id)
     if event.new_chat_member.status == 'member':
         if event.from_user.id != 6166594444:
             # await bot.delete_message(chat_id=event.chat.id, message_id=event.message_id)
@@ -38,7 +38,7 @@ async def on_user_join(event: ChatMemberUpdated, bot: Bot):
                         try:
                             member = await bot.get_chat_member(user_id=event.from_user.id,
                                                                chat_id=group.group_id)
-                            if member.status == 'member':
+                            if member.status in ['member', 'administrator']:
                                 is_ban = False
                         except:
                             pass
@@ -46,7 +46,7 @@ async def on_user_join(event: ChatMemberUpdated, bot: Bot):
                     msg = await event.answer(text=f'Пользователь <a href="tg://user?id={event.from_user.id}">'
                                                   f'{event.from_user.full_name}</a> не состоит в клановских беседах'
                                                   f' и будет забанен на один час')
-                    print(event.from_user.id)
+                    # print(event.from_user.id)
                     await bot.ban_chat_member(chat_id=general_group.group_id, user_id=event.from_user.id)
                     # await asyncio.sleep(1 * 60)
                     # await msg.delete()
