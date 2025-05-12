@@ -2,7 +2,7 @@ import logging
 
 from database.models import async_session
 from database.models import User, ClanGroup, Chat_reaction, ChatAction, Recruting, RecrutingOpros
-from sqlalchemy import select, update
+from sqlalchemy import select, update, desc
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 
@@ -256,6 +256,28 @@ async def get_users() -> list[User]:
         users = await session.scalars(select(User))
         users_list = [user for user in users]
         return users_list
+
+
+async def get_top_honor_users(rang: int) -> list[User]:
+    """rang - число интересующих нас людей"""
+    logging.info('get_top_honor_users')
+    async with async_session() as session:
+        result = await session.execute(
+            select(User).order_by(desc(User.honor)).limit(rang)
+        )
+        users = result.scalars().all()
+        return users
+
+
+async def get_top_all_honor_users(rang: int):
+    """rang - число интересующих нас людей"""
+    logging.info('get_top_all_honor_users')
+    async with async_session() as session:
+        result = await session.execute(
+            select(User).order_by(desc(User.all_honor)).limit(rang)
+        )
+        users = result.scalars().all()
+        return users
 
 
 """GROUP"""
