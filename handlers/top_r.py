@@ -20,7 +20,7 @@ async def process_command_del_r(message: Message, bot: Bot):
     :param bot:
     :return:
     """
-    logging.info('process_command_del_r')
+    logging.info('process_command_top_r')
     # удаляем сообщение с командой
     await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
     # проверка что команду использует администратор или владелец чата
@@ -41,6 +41,6 @@ async def process_command_del_r(message: Message, bot: Bot):
         top_users_all_honor += f"{num}. <a href='tg://user?id={int(user.tg_id)}'>{user.nickname}</a> - {user.all_honor}\n"
     await message.answer("РЕЙТИНГ\n\n"
                          "ВСЯ ЧЕСТЬ:\n\n"
-                         f"{top_users_honor}"
-                         "Честь:\n\n"
+                         f"{top_users_honor}\n\n"
+                         "ЧЕСТЬ:\n\n"
                          f"{top_users_all_honor}")
