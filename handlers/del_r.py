@@ -57,7 +57,7 @@ async def process_command_del_r(message: Message, command: CommandObject, bot: B
                 user: User = await rq.get_user_tg_id(tg_id=user_to_action)
                 if user:
                     await rq.change_honor(tg_id=user_to_action, sign=sign, number=int(numbers))
-                    await message.answer(f"Честь у пользователя <a href='tg://user?id={user.tg_id}'>{user.nickname}</a> изменилась "
+                    await message.answer(f"Честь у пользователя <a href='tg://user?id={int(user.tg_id)}'>{user.nickname}</a> изменилась "
                                          f"на {list_arguments[1]}")
                 else:
                     await message.answer(text='Пользователь с таким id не найден')
@@ -66,7 +66,7 @@ async def process_command_del_r(message: Message, command: CommandObject, bot: B
                 user: User = await rq.get_user_username(username=username)
                 if user:
                     await rq.change_honor(tg_id=user.tg_id, sign=sign, number=int(numbers))
-                    await message.answer(f"Честь у пользователя <a href='tg://user?id={user.tg_id}'>{user.nickname}</a> изменилась "
+                    await message.answer(f"Честь у пользователя <a href='tg://user?id={int(user.tg_id)}'>{user.nickname}</a> изменилась "
                                          f"на {list_arguments[1]}")
                 else:
                     await message.answer(text='Пользователь с таким username не найден')

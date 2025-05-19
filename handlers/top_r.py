@@ -30,15 +30,15 @@ async def process_command_del_r(message: Message, bot: Bot):
         await asyncio.sleep(5)
         await msg.delete()
         return
-    num_top=10
+    num_top = 10
     top_honor = await rq.get_top_honor_users(num_top)
-    top_all_honor = await  rq.get_top_all_honor_users(num_top)
-    top_users_honor=""
+    top_all_honor = await rq.get_top_all_honor_users(num_top)
+    top_users_honor = ""
     top_users_all_honor = ""
-    for user, num in enumerate(top_honor, start=1):
-        top_users_honor+=f"{num}. <a href='tg://user?id={user.tg_id}'>{user.nickname}</a> - {user.honor}\n"
-    for user, num in enumerate(top_all_honor, start=1):
-        top_users_all_honor+=f"{num}. <a href='tg://user?id={user.tg_id}'>{user.nickname}</a> - {user.all_honor}\n"
+    for num, user in enumerate(top_honor, start=1):
+        top_users_honor += f"{num}. <a href='tg://user?id={int(user.tg_id)}'>{user.nickname}</a> - {user.honor}\n"
+    for num, user in enumerate(top_all_honor, start=1):
+        top_users_all_honor += f"{num}. <a href='tg://user?id={int(user.tg_id)}'>{user.nickname}</a> - {user.all_honor}\n"
     await message.answer("РЕЙТИНГ\n\n"
                          "ВСЯ ЧЕСТЬ:\n\n"
                          f"{top_users_honor}"
