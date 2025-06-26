@@ -165,12 +165,20 @@ async def no_recruting_clan(callback: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data == 'yes_recruting_clan')
 async def yes_recruting_clan(callback: CallbackQuery, state: FSMContext):
+    """
+    Подтверждение админом вступления в клан
+    :param callback:
+    :param state:
+    :return:
+    """
     logging.info(f'yes_recruting_clan  {callback.data}')
     await callback.message.delete()
+    # если данных о рекрутинге нет
     recruting = await rq.get_recruting()
     if not recruting:
         return
     msg = ''
+    # рекрутинг открыт
     if recruting.is_recruting == 'True':
         recruting_opros = await rq.get_recruting_opros_tg_id(tg_id=callback.from_user.id)
         # print(recruting_opros)
@@ -180,20 +188,20 @@ async def yes_recruting_clan(callback: CallbackQuery, state: FSMContext):
             delta_time = (datetime.datetime.strptime(current_date, date_format) - datetime.datetime.strptime(recruting_opros.data_opros,
                                                                                            date_format))
             # print(delta_time.days)
-            if delta_time.days < 7:
-                await callback.message.answer(text='На текущий момент набор в клан закрыт.',
-                                              reply_markup=None)
-            else:
-                msg = await callback.message.edit_text(text='1. Отправьте ваш ID аккаунта из PUBG MOBILE.',
-                                                       reply_markup=None)
-                await state.set_state(state=Recruting.opros_1)
+            # if delta_time.days < 7:
+            #     await callback.message.answer(text='На текущий момент набор в клан закрыт.',
+            #                                   reply_markup=None)
+            # else:
+            msg = await callback.message.edit_text(text='1. Отправьте ваш ID аккаунта из PUBG MOBILE.',
+                                                   reply_markup=None)
+            await state.set_state(state=Recruting.opros_1)
         else:
             msg = await callback.message.answer(text='1. Отправьте ваш ID аккаунта из PUBG MOBILE.',
-                                                   reply_markup=None)
+                                                reply_markup=None)
             await state.set_state(state=Recruting.opros_1)
     elif recruting.is_recruting == 'False':
         await callback.message.answer(text='На текущий момент набор в клан закрыт.',
-                                         reply_markup=None)
+                                      reply_markup=None)
     await state.update_data(msg=msg)
     await callback.answer()
 

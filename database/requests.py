@@ -536,7 +536,7 @@ async def get_recruting_opros_tg_id(tg_id: int) -> RecrutingOpros:
     Получение строки рекрутинга
     :return:
     """
-    logging.info(f'get_recruting {tg_id}')
+    logging.info(f'get_recruting_opros_tg_id {tg_id}')
     async with async_session() as session:
         recruting_opros = await session.scalars(select(RecrutingOpros).where(RecrutingOpros.tg_id == tg_id))
         if recruting_opros:
